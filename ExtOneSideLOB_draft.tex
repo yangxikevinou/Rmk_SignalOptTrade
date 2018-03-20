@@ -1,0 +1,649 @@
+\documentclass[openany,oneside]{article}
+\usepackage{fullpage}
+\usepackage{amsmath,amsthm,amssymb,mathtools,tikz,epsfig,enumerate}
+\usepackage{hyperref,titling,titlesec,pdfpages,setspace,fancyhdr,multicol,appendix}
+\usepackage[numbers]{natbib}
+
+% formatting
+\setlength{\parskip}{2ex}
+\setlength{\parindent}{0pt}
+
+% statement environment
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+ 
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{prob}[thm]{Problem}
+\newtheorem{eg}[thm]{Example}
+ 
+\theoremstyle{remark}
+\newtheorem{rem}[thm]{Remark}
+
+% shorthand notations
+\newcommand{\E}{\mathbb{E}} % expectation
+\renewcommand{\P}{\mathbb{P}} % probability
+\newcommand{\I}{\mathbb{I}} % indicator
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert} % absolute value, or cardinality
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert} % norm
+
+
+% info
+\title{ExtOneSideLOB}
+\author{Yangxi Ou \\* Department of Mathematical Sciences \\* Carnegie Mellon University}
+\date{Summer 2017}
+\hypersetup{bookmarksnumbered=true, 
+			bookmarksopen=true,
+            unicode=true,
+            pdftitle=\thetitle,
+            pdfauthor=Yangxi Ou,
+            pdfstartview=FitH,
+            pdfpagemode=UseOutlines}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{document}
+
+% title and table of contents
+\begin{center}	
+	\textbf{\Large Generalizations of OPTIMAL EXECUTION IN A GENERAL ONE-SIDED LIMIT-ORDER BOOK by Predoiu, Shaikhet, and Shreve, 2011} \\*[5ex]    
+    Comments and research ideas \\*[5ex]
+	\theauthor \\*[5ex]
+    \thedate \\*[5ex]
+	\tableofcontents
+\end{center}
+
+
+% Summary of original and directions of generalizations
+\section*{Summary of the original paper, and directions of generalizations}
+The following is a brief summary of the original paper OPTIMAL EXECUTION IN A GENERAL ONE-SIDED LIMIT-ORDER BOOK by Predoiu, Shaikhet, and Shreve, published on SIAM J. Finan. Math. in 2011\citep{predoiu2011optimal}. In this entire draft, if not further explained, the phrase ``the paper'', ``the original paper'', and etc. refers to \citet{predoiu2011optimal}.
+
+\begin{itemize}
+\item Setup
+
+A single large investor buying a specified security with only market buy orders against a centralized limit order book. His holding of the security is described by $X=\{X_t\}_{t\in[0,T]}$, an non-decreasing cadlag function adapted to a given filtered probability space satisfying the usual conditions $(\Omega, \mathcal{F}, \{\mathcal{F}_t\}_{t\in[0,T]}, \P)$.
+
+
+\item Input
+
+\begin{itemize}
+\item Target quantity to be purchased: $\bar{X} > 0$
+
+\item Time span of purchase: $[0,T]$
+
+\item Hypothetical (equilibrium) best ask price: $A=\{A_t\}_{t\in[0,T]}$, a continuous non-negative $\mathcal{H}^1$ martingale, i.e. $\E[A^\ast_T] < \infty$, where $A^\ast_t := \sup_{0\le s\le t} \abs{A_s}$. $A$ represents the hypothetical (equilibrium) best ask price as if there was zero trading activities from the beginning of the period. It is a quantitative description of the position of the ask side of the limit order book.
+
+\item Hypothetical (equilibrium) shape of limit order book: $F:\mathbb{R}_+ \to \mathbb{R}_+$, an non-decreasing caglad function specifying the cumulative quantity $F(x)$ of securities immediately available for purchase below the price level $x+A_t$ as if there was zero trading activity from the beginning of the period. We can imagine a entire static limit order book pegging to the hypothetical best ask price if there is no trading at all. More technically, if one were to apply PCA to the dynamics of the limit order book in the absence of arriving market buy orders, there is only one component (accounting for $100\%$ of explanatory power): the hypothetical best ask price.
+
+\item Resiliency function: $h:\mathbb{R}_+ \to \mathbb{R}_+$, a strictly increasing locally Lipschitz function, vanishing at the origin ($h(0)=0$) with limit at infinity greater than $\bar{X}/T$ ($h(+\infty) > \bar{X}/T$), representing the rate of replenishment $h(x)$ of limit sell orders at the quantity level $x$. It specifies the response of the ask side of the limit order book to the aggregate market buy order flow: $E_t = X_t - \int_0^t h(E_s) ds, \forall t\in[0,T]$, where $X_t$ is the cumulative market buy orders up to time $t$, and $E_t$ is the actual or observed quantity level in the equilibrium limit order book.
+
+\item Cost functional of purchase: $C(X) := \int_0^T (A_t + D_t) d X^c_t + \sum_{0\le t\le T} [A_t \Delta X_t + \Phi(E_t) - \Phi(E_{t^-})]$, where $D_t$ is the extra marginal cost of continuous purchase at time $t$ (due to walking through the book) and $\Phi:\mathbb{R}_+ \to \mathbb{R}_+$ describes the total cost $\Phi(x)$ of purchasing $x$ amount of security immediately from the hypothetical best ask price in the equilibrium limit order book.
+\end{itemize}
+
+
+\item Output
+
+Optimal execution strategy and expected cost of purchase: $X^\ast:[0,T] \to \mathbb{R}_+$ that minimizes the expected cost $\E C(X)$ among all non-decreasing cadlag adapted process $X$ satisfying $X_T = \bar{X}$.
+
+
+\item Conclusion
+
+\begin{itemize}
+\item WLOG, one can consider deterministic strategies for optimal execution.
+
+\item Optimal execution can be achieved by Type B strategies: an initial lump sum purchase at time $0$, followed by continuous purchase exactly offsetting the resiliency so as to keep a constant level in the equilibrium book, then another lump sum purchase at an intermediate time, again followed by continuous purchase exactly offsetting the resiliency, and finally a terminal lump sum purchase at time $T$.
+
+\item Lump sum purchase could be zero. If the intermediate lump sum purchase is zero, it is called a Type A strategy, a special case of Type B strategy. A characterization regarding convexity is given for the optimality of Type A strategies, i.e. absence of intermediate lump sum in at least one optimal strategy. Uniqueness of optimal strategy is also discussed.
+\end{itemize}
+
+
+\item Methods/techniques
+\begin{itemize}
+\item Well-posedness (excluding continuity) of the imposed order book dynamics: The equation $E_t = X_t - \int_0^t h(E_s) ds, \forall t\in[0,T]$ has a unique solution $E$ for any admissible $X$. This is a standard ODE argument.
+
+\item Connections between price level, quantity level, are total cost in the equilibrium limit order book: $\psi:\mathbb{R}_+ \to \mathbb{R}_+$ gives the marginal price level $\psi(x)$ corresponding to the quantity level $x$, $\Phi:\mathbb{R}_+ \to \mathbb{R}_+$ gives the total cost $\Phi(x)$ of all securities up to the quantity level $x$ in the equilibrium book. This is mainly bookkeeping, introducing the correct definition/symbols and change of variables.
+
+\item Restatement of the problem: separate the random hypothetical best ask price $A$ (position of the limit order book) and the deterministic shape of the book $\Phi$ and dynamics of the book $h$. Rewrite the cost functional as a function of the \emph{state} $E$ instead of the \emph{control} $X$. The cost function is thus $C(X) = C(E) := \Phi(E_T) + \int_0^T \psi(E_s) h(E_s) ds$.
+
+\item Solving the restated problem using convex analysis: write the cost functional as the sum of a convex function of $E_T$ and a convex function of $h(E_s)$: $C(E) = \Phi(E_T) + \int_0^T g(h(E_s)) ds$, where $g(y) := y\psi(h^{-1}(y))$. Apply convex analysis (and duality). The cost functional is relaxed to the lower semicontinuous convex envelope (convex bi-dual) if it is not convex, in particular, $g$ is replaced by $\hat{g}:=g^{\ast\ast}$. Type A strategy solution is obtained in the convex case. Type B strategy solution is obtained in the relaxed case. Young's measure (convex combinations of states, often obtained as solutions to relaxed convex functionals in calculus of variations) is used to produce optimal solution in the relaxed case.
+\end{itemize}
+
+\end{itemize}
+
+
+The following is my personal comments on the paper.
+\begin{itemize}
+\item Pros
+
+\begin{itemize}
+\item A general enough setup yet a simple explicit solution.
+\item (Tedious) technicalities are addressed in details, laying solid ground work for further generalizations. \item Stylized computable examples covering all cases discussed in the paper.
+\end{itemize}
+
+\item Cons
+
+\begin{itemize}
+\item The perspective is too classic: the emphasis of the paper is on the \emph{form} of the solution instead of essential \emph{properties} of the problem and solutions. In particular, problems with varying input parameters are treated as standalone problems, while continuity of solutions with respect to data is not studied completely. The classical approach usually only permits symbolic computations (under the condition that one can compute subgradients, derivatives and solve equations relatively easily), rather than more general and efficient numerical calculations. (This case is quite unusual numerically: because Type B strategy is finite-dimensional (dimension $6$), one \emph{reduces} an infinite dimensional optimization problem to a finite dimensional one.)
+\item The simplified assumptions of deterministic time-homogeneous (morally a notion of ``equilibrium'' or ``semi-static'') shape of the book $F$ and resiliency $h$ might be good approximations to reality, but require more theoretical and empirical scrutiny.
+\end{itemize}
+
+\end{itemize}
+
+
+The following are possible directions of generalizations or complements.
+\begin{itemize}
+\item Abstract properties and robustness of the problem: continuity/regularity of solutions with respect to inputs (under some appropriate topologies)
+\item Time-inhomogeneous resiliency function $h$
+\item Not increasing resiliency function $h$
+\item Noise order flows in addition to the large investor's orders
+\item Price-dependent deterministic resiliency function $h$ (it has been ``considered'' according to the paper)
+\item Stochastic resiliency
+\item Time-inhomogeneous deterministic equilibrium shape of the limit order book
+\item Stochastic shape of the limit order book
+\item Efficient numerical methods to compute (almost) minimizers, echoing abstract properties of the problem
+\item Incorporate limit buy orders, and model market sell order flows
+\item Multi-investor game of purchase
+\end{itemize}
+
+
+% jumps
+\section{Introducing jumps into the best ask price $A$}
+In the original model, the hypothetical best ask price $A$ is assumed to be continuous. Continuity can be relaxed to cadlag (but still $A\in \mathcal{H}^1$), the most general possible stochastic integrator, due to the stochastic integration by parts formula. The decomposition of cost functional into deterministic and martingale parts still works under the new assumption, as follows:
+\begin{align*}
+\int_{[0,T]} A_{t^-} d X_t &= A_T X_T - A_{0^-} X_{0^-} - \int_{[0,T]} X_{t^-} d A_{t} - \sum_{0\le t\le T} \Delta X_t \Delta A_t \quad \textrm{(integration by parts for cadlag semimartingales)} \\
+\int_{[0,T]} A_{t} d X_t &= A_T X_T - A_{0^-} X_{0^-} - \int_{[0,T]} X_{t^-} d A_{t} \quad \textrm{(similar to the first formula in Section 3 Problem simplifications)}
+\end{align*}
+Following exactly the same argument in the original paper (due to $\mathcal{H}^1$ integrability of $A$), we still obtain Equation (3.1): $\E C(X) = \E \int_0^T D_t d X^c_t + \E \sum_{0\le t\le T} [\Phi(E_t) - \Phi(E_{t^-})] + \bar{X} A_{0^-}$. Thus, WLOG, we may assume $A\equiv 0$ even though the actual best ask price can possibly jump.
+
+There is another subtle technical point regarding the portfolio holding process $X$ when $A$ is allowed to have jumps. In the original paper, $X$ is assumed to be cadlag adapted when $A$ is assumed to be continuous. Since the only randomness in the model is due to the \emph{continuous} ask price process $A$, one may assume WLOG (or argue by Occam's razor) that the filtration $\{\mathcal{F}_t\}_{t\in[0,T]}$ is the augmented natural filtration generated by $A$. It is well known\citep{protter2005stochastic} that in such a filtration, the predictable sigma-algebra coincides with the optional sigma-algebra (while the former is in general a subset of the latter), and hence $X$ is indeed predictable. In other words, it does not matter whether $X$ is cadlag adapted or cadlag predictable in this case. However, predictability and optionality is different when $A$ is allowed to have jumps. In finance, portfolio holdings should be assumed \emph{predictable} so as to model the reality of no future information. One should impose that $X$ is cadlag predictable or even caglad adapted if $A$ is a cadlag $\mathcal{H}^1$ martingale. Impose predictability of $X$ does not change the integration by parts formula above, and hence the rest still holds.
+
+In short, one can relax the original model to the following setup easily (without changing the solution):
+\begin{itemize}
+\item The hypothetical best ask price $X$ is a \emph{cadlag} (nonnegative) $\mathcal{H}^1$ martingale.
+\item The investor's purchasing strategy, or portfolio holding $X$ is non-decreasing, cadlag, and \emph{predictable}.
+\end{itemize}
+
+The economic implication of this relaxation is to allow surprises in the best ask price, or a sudden unexpected shift in the position of the ask side of the limit order book.
+
+
+% not increasing resiliency
+\section{Not increasing resiliency function $h$ and continuity of the problem}
+The original paper assume that the resiliency function $h:\mathbb{R}_+ \to \mathbb{R}_+$ is \emph{strictly} increasing, locally Lipschitz and $h(0) = 0, h(+\infty) := \lim_{x\to +\infty} h(x) > \bar{X}/T$. Local Lipschitzness is necessary for the unique existence of the so-called volume-effect process $E$ (defined via ODE), which describes the quantity level of the book at which the actual/observed best ask price is. The condition $h(0)=0$ incorporates the notion of hypothetical equilibrium \emph{best} ask price, simply saying that there is no competition of liquidity provision at the best ask price level. The other two conditions are reasonable, but more for technical convenience rather than as necessary. We consider some relaxations of the monotonicity and the limit.
+
+
+\subsection{Relaxing the limit: inadequate resiliency function $h$}
+Let's first re-examine the condition that $h(+\infty) > \bar{X}/T$. Economically, $\bar{X}/T$ is the (minimal) average speed of purchase of the large investor. So the limiting condition requires that the rate of resiliency eventually exceeds the average rate of purchase, should a sufficient large quantity in the book has been consumed. We interpret this condition as \emph{adequate} resiliency. I believe that the adequate resiliency condition is artificial (no compelling economic reason and can easily be violated)  and can be removed without changing the solution to the problem (of course, the stronger the resiliency, i.e. more liquidity provision, the better for the large investor). Here is an extreme case: suppose that $h\equiv 0$, in other words, there is no resiliency at all, then any purchasing strategy will give the same cost $\Phi(\bar{X})$, and in particular, an initial discrete lump sum order will do the job, which is still a Type A strategy defined in the paper. We give a formal argument below.
+
+Suppose that $h:\mathbb{R}_+ \to \mathbb{R}_+$ is strictly increasing, locally Lipschitz and $h(0)=0$, but $h(+\infty)$ could take any value in $[0,+\infty]$, i.e. resiliency may be \emph{inadequate}. The original paper does not reference the adequate resiliency condition until Section 4 Equation (4.2), which defines the (restricted compact) domain of $g$ to be $\left[0, \bar{Y}:=\max\{h(\bar{X}), \bar{X}/T\} \right]$. I think that maximum should really be minimum in Subsection 4.1 where $g$ is restricted to be convex. This is due to Equation (4.10) the (unique) $\bar{e} \in (0,\bar{X})$ such that $k(\bar{e}) = \bar{e} + h(\bar{e}) T = \bar{X}$. Note that we have another upper bound for $\bar{e}$: if $h(e) = \bar{X}/T >0$, then $e>0$ and $e+h(e)T > \bar{X}$. Thus $\bar{e} < h^{-1}(\bar{X}/T)$ as well. So $\bar{e} \in \left(0, \min\{\bar{X}, h^{-1}(\bar{X}/T)\} \right)$. Therefore, one only needs to consider $y\in \left[0, \underline{Y}:=\min\{h(\bar{X}), \bar{X}/T\} \right]$ for cost minimization in Subsection 4.1. This point is ``re-confirmed'' in the proof of Theorem 4.2, in which the global Type A strategy minimizer is characterized by some $e^\ast \in [\bar{e}, \bar{X}]$. Hence, we have $h\left(\frac{X-e^\ast}{T}\right) \le h\left(\frac{X-\bar{e}}{T}\right) = h(\bar{e}) < \underline{Y}$, which says that it is enough to restrict the domain of $g$ to $[0,\underline{Y}] \subseteq [0,\bar{Y}]$.
+
+In Subsection 4.2, we can no longer restrict the domain of $g$ to be $[0,\underline{Y}]$ even though it is still true that $e^\ast \in [0,\underline{Y}]$. The issue here is that we study the relaxed cost functional $\hat{C}(X) := \Phi(E_T) + \int_0^T \hat{g}(h(E_t)) dt$ instead of the original cost $C(X)$ ($\hat{g}$ is the lower semicontinuous convex envelope of $g$ over $[0,\bar{Y}]$), and the optimal rate of continuous purchase $y^\ast := \frac{\bar{X}-e^\ast}{T}$ is ``synthesized'' by a convex combination (expectation under a certain probability called Young's measure) of a pair of continuous purchasing rates $\alpha$ and $\beta$, at both of which $g$ and $\hat{g}$ coincide. One cannot guarantee that $\beta \in [0,\underline{Y}] \subseteq [0,\bar{X}/T]$ any more, but $\beta \le h(\bar{X})$ still holds. An optimal Type B strategy $X^B$ (which does not degenerate to Type A) has the following form, for some carefully chosen $t_0 \in [0,T]$:
+\begin{align*}
+X^B_t =
+\begin{cases}
+h^{-1}(\alpha) + \alpha t, & \quad 0\le t < t_0, \\
+h^{-1}(\beta) + \alpha t_0 + \beta (t-t_0), & \quad 0\le t < T, \\
+\bar{X}, & \quad t=T
+\end{cases}
+\end{align*}
+Inequality (4.25) along its proof shows that such $X^B$ is non-decreasing, and in particular, $h^{-1}(\beta) \le X^B_{t_0} \le X^B_{T} = \bar{X} \Rightarrow \beta \le h(\bar{X})$ as claimed. So one can further restrict the domain of $g$ to $[0,Y:=h(\bar{X})]$ in general, instead of the larger interval $[0,\bar{Y}]$. Even though the relaxed function $\hat{g}$ depends on the domain of $g$ at a first glance, its value does not change for those points where $g$ and $\hat{g}$ coincide if we shrink the domain. In particular, if we make the new domain to be $[0,Y]$, we still obtain the same optimal Type B strategy with the same $t_0$, $\alpha$ and $\beta$.
+
+In summary, we can drop the adequate resiliency condition and make only the following modifications without change our reasoning and conclusions:
+\begin{itemize}
+\item $h:\mathbb{R}_+ \to \mathbb{R}_+$ is strictly increasing, locally Lipschitz, and $h(0)=0$.
+\item The domain of $g$ is restricted to the interval $[0,h(\bar{X})]$.
+\end{itemize}
+
+In terms of economics, resiliency need not be too large even when a large volume of the book has been consumed, and the large investor should consider a smaller interval of resiliency rate (and hence continuous purchasing rate) when searching for optimal execution strategy. In a nutshell, if he pushes the resiliency rate above $h(\bar{X})$, he has already achieved his target quantity $\bar{X}$ no matter his path of purchasing. The optimal strategy takes the exact same form as before.
+
+
+\subsection{Not increasing resiliency function $h$}
+Now, further assume that $h$ is merely increasing but not necessary strict while keeping local Lipschitzness and $h(0)=0$ intact. In terms of economics, competition for liquidity provision is not intensified as more quantities of securities are consumed. This can reasonably happen if \emph{all} liquidity providers increase rate of replenishment only when the actual best ask price changes.
+
+Under the new assumption the quantity level $E_t = X_t - \int_0^t h(E_s) ds$ is still well-defined. The deductions in Section 2 and 3 are unchanged verbatim, in particular, we still have the restated simplified cost functional: $C(X) = \Phi(E_T) + \int_0^T \psi(E_t) h(E_t) dt$. The first key step in Section 4, definition of the function $g(y):= y\psi(h^{-1}(y))$, now requires attention as $h$ is no longer invertible. We mitigate the problem by using the lower-continuous (left-continuous) inverse $\underline{h}^{-1}$ of $h$, where $\underline{h}^{-1}(y) := \inf\{x\in\mathbb{R}_+ : h(x)\ge y\}$. (This is very intuitive: for the same rate of resiliency, i.e. marginal liquidity provision, the investor would like to trade at a lower level of the book to obtain a marginal price no higher.) Note that $h$ is actually continuous and hence surjective onto $[0,h(\bar{X})]$ if its domain is restricted to $[0,\bar{X}]$ (since $0\le E_t \le \bar{X}, \forall t\in[0,T]$), so we have $\underline{h}^{-1}(y) = \inf\{x\in\mathbb{R}_+ : h(x)=y\} = \min\{x\in\mathbb{R}_+ : h(x)=y\}$, and hence $h\left(\underline{h}^{-1}(y)\right) = y$ and $\underline{h}^{-1}(h(x)) \le x$. In other words, $\underline{h}^{-1}$ is the smallest right inverse of $h$, and it is increasing as well. With this relation in mind, we define $g(y):=y\psi(\underline{h}^{-1}(y))$ in place of Equation (4.1), and the following three observations (4.3), (4.4), and (4.5) hold with Equation (4.4) becoming
+\begin{align*}
+C(X) = \Phi(E_T) + \int_0^T \psi(E_t) h(E_t) dt \ge \Phi(E_T) + \int_0^T \psi(\underline{h}^{-1}(h(E_t))) h(E_t) dt = \Phi(E_T) + \int_0^T g(h(E_t)) dt
+\end{align*}
+with equality if $E_t \in \underline{h}^{-1}([0,h(\bar{X})])$, for $t\in[0,T]$ a.e. (only sufficient, as $\psi$ itself is not strictly increasing).
+
+Continuing to Subsection 4.1, here we first assume that $g$ defined above is convex. Remark 4.1 is the same as in the original paper, as $k$ is continuous and strictly increasing because $k(e) = e + h(e) T$. In particular, there is a unique $\bar{e} \in [0,\bar{X}]$ such that $k(\bar{e}) = \bar{e} + h(\bar{e}) T = \bar{X}$. Thus, the admissibility condition of a Type A strategy is still $\bar{e} \le E^A_T \le \bar{X}$. For the proof of Theorem 4.2, there could be two alternative routes. The first one is to follow almost the same arguments as in the paper with $h^{-1}$ replaced by $\underline{h}^{-1}$. The slight difference one make here is to optimize $G(e) := \Phi(e) + T g\left(\frac{\bar{X}-e}{T}\right)$ over the admissible interval $[\bar{e}, \bar{X}]$ instead of $[0,\bar{X}]$. (This route can be seen as a simplification of the original proof of Theorem 4.2 in the paper, so that it is unnecessary to check admissibility again.) However, one cannot conclude that the global minimizer of $G$ is a critical point (in terms of existence of a zero-subdifferential) as implied by the original proof via this simplification. To obtain this stronger implication, one need to follow Case I in the proof of Theorem 4.5 and consider $e^\ast$ to be the \emph{greatest} minimizer of $G$ (or $\hat{G}$). This is the second route to show Theorem 4.2 under the generalization that $h$ is non-decreasing. Either way, the optimal strategy has $X^A_0 = E^A_t = \underline{h}^{-1}\left(\frac{\bar{X}-e^\ast}{T}\right), \forall t\in[0,T)$, which makes the above Inequality (4.4) an equality. Similarly, replacing $h^{-1}$ with $\underline{h}^{-1}$ in the proof of Theorem 4.5 gives us the exact same conclusion in Subsection 4.2 where $g$ need not be convex. Thanks to the right inverse property that $h\circ \underline{h}^{-1} = id$ when restricted to $[0,h(\bar{X})]$. Inequality (4.4) above also becomes an equality.
+
+Thus, one can relax strictly increasing $h$ to non-decreasing $h$ in the original setup, and the conclusion remains the same. The key here is to use \emph{lower semicontinuous} inverse $\underline{h}^{-1}$, characterized as the smallest right inverse of $h$.
+
+To ``go beyond'' monotonicity, i.e. $h$ is only assumed to be locally Lipschitz and $h(0)=0$, we convert the situation to the monotone case by introducing the running maximum $\bar{h}:\mathbb{R}_+ \to \mathbb{R}_+$ of $h$, given by $\bar{h}(x) := \sup_{0\le z\le x} h(z)$, characterized as the smallest non-decreasing function above $h$. Recall or observe that $\underline{h}^{-1}$ is (still) the smallest right inverse of $h$. To be clear and connect all functions derived from $h$, we state the following lemma.
+\begin{lem}
+Let $f:\mathbb{R}_+ \to \mathbb{R}_+$ be a continuous non-negative function defined on the half real line such that $f(0)=0$. Set $\bar{f}:\mathbb{R}_+ \to \mathbb{R}_+$ to be $\bar{f}(x) := \sup_{0\le z\le x} f(z)$ and $\underline{f}^{-1}:f(\mathbb{R}_+) \to \mathbb{R}_+$ to be $\underline{f}^{-1}(y) := \inf\{x\in\mathbb{R_+} : f(x) \ge y\}$. Then the followings hold:
+\begin{enumerate}
+\item $\bar{f}$ is continuous, non-decreasing, with $\bar{f}(0)=0$, $\bar{f}(\mathbb{R}_+)  = f(\mathbb{R}_+)$ and $\bar{f} \ge f$;
+\item If $\tilde{f}$ is non-decreasing and $\tilde{f} \ge f$, then $\tilde{f} \ge \bar{f}$;
+\item If $x\in \mathbb{R}_+$ is such that $\bar{f}(x) > f(x)$, then there is $z\in(0,x)$ such that $\bar{f}(z) = f(z)$;
+\item $\underline{f}^{-1}$ is caglad, non-decreasing, with $\underline{f}^{-1}(0)=0$, $f\circ \underline{f}^{-1}(y) = y, \forall y\in f(\mathbb{R}_+)$ and $\underline{f}^{-1} \circ f (x) \le x, \forall x\in \mathbb{R}_+$ with equality iff $x\in \underline{f}^{-1}(f(\mathbb{R}_+))$;
+\item If $k:f(\mathbb{R}_+) \to \mathbb{R}_+$ is a right inverse of $f$, i.e. $f\circ k = id$, then $\underline{f}^{-1} \le k$;
+\item $\underline{\left(\bar{f}\right)}^{-1}$ is a right inverse of $f$, and hence $\underline{\left(\bar{f}\right)}^{-1} = \underline{f}^{-1}$.
+\end{enumerate}
+\end{lem}
+
+Leveraging on the special case of non-decreasing $h$ above, we can tackle non-monotone $h$ easily by considering $\bar{h}$. Inequality (4.4) $C(X) = \Phi(E_T) + \int_0^T \psi(E_t) h(E_t) dt \ge \Phi(E_T) + \int_0^T g(h(E_t)) dt$ remains true, and the equality is attained when $E_t \in \underline{h}^{-1}([0,\bar{h}(\bar{X})])$ for a.e. $t\in[0,T]$. But for such $E_t$, we have $h(E_t) = \bar{h}(E_t)$, and hence we can minimize the cost functional with $\bar{h}$ instead. In Remark 4.1, a Type A strategy will be admissible if $E^A_T \in[\bar{e},\bar{X}]$, where $\bar{e}$ satisfies $\bar{k}(\bar{e}) = \bar{X}$ and $\bar{k}(e) := e + \bar{h}(e) T$. Such $\bar{e} \in [0,\bar{X}]$ is well-defined since $\bar{k}$ is continuous and strictly increasing. The proof of Theorem 4.2 and Theorem 4.5 follow the special case that $h$ is non-decreasing.
+
+To end this subsection, we can impose the following less stringent conditions on the resiliency function $h$ while keeping the original conclusions:
+\begin{itemize}
+\item $h(0)=0$
+\item $h$ is locally Lipschitz
+\end{itemize}
+The financial intuition of the solution is straightforward: for the same level of marginal liquidity supply (i.e. resiliency) which is entirely determined by the quantity level of the book, the investor would select the lowest possible quantity level (whose mathematical counterpart is lower semicontinuous inverse) so as to minimize margin execution price.
+
+
+% time-dependent resiliency
+\section{Time-dependent resiliency function $h$}
+So far, we have relaxed the model to include:
+\begin{itemize}
+\item $A$ is a cadlag (nonnegtaive) $\mathcal{H}^1$ martingale;
+\item $X$ is non-decreasing, cadlag and predictable;
+\item $h$ is locally Lipschitz and $h(0)=0$.
+\end{itemize}
+
+The next natural generalization is to consider time-inhomogeneous resiliency $h:[0,T]\times \mathbb{R}_+ \to \mathbb{R}_+$, with $h(t,x)$ representing the replenishment speed at time $t$ if the book is at the quantity level $x$. It is immediate to see that we should require $h(t,\cdot)$ to be locally Lipschitz uniformly in time $t$ (i.e. with the same Lipschitz constant for varying $t$, which guarantees the unique existence of the volume effect process $E$ given via the differential equation) and $h(t,0)=0$ for $t\in[0,T]$ (or weaker, a.e.). However, it is not clear what regularity condition we should impose for the time variable $t$, i.e. for the function $t\mapsto h(t,\cdot)$, which describes the evolution of the resiliency function. We delay the technicalities for the time being, and informally discuss alternate solution techniques for the original problem. This will help us better understand the time-inhomogeneous case.
+
+\subsection{A digression to calculus of variations: Lagrangian, Hamiltonian, and duality}
+This subsection is to introduce Euler-Lagrangian equation, Hamilton-Jacobi-Bellman equation, and dual function for the original problem (possibly with time-inhomogeneous resiliency). We focus on the big pictures and omit details at the expense of mathematical rigor. In addition, we don't claim that any standalone method could completely solve the original problem.
+
+Suppose that resiliency function $h:[0,T]\times \mathbb{R}_+ \to \mathbb{R}_+$ is time-dependent. We write $h_t$ for $h(t,\cdot)$ for notational ease, and could define $\overline{h_t}$ and $\underline{h_t}^{-1}$ as before. Moreover, we can set $g_t(y) := y \psi(\underline{h_t}^{-1}(y))$ for $y\in [0,\overline{h_t}(\bar{X})]$ and $t\in[0,T]$. Assume necessary regularity (continuity or differentiability) for functions whenever needed in the following computations.
+
+The first way to minimize the functional $C(X) = \Phi(E_T) + \int_0^T g_t(h_t(E_t)) dt$ is to consider variations. Suppose that a minimizer is known, any perturbed admissible strategy will cost more than the minimizer. This idea leads to the Euler-Lagrange equation, which is essential a critical point condition for the cost functional at the minimizer. Symbolically, let $E$ be a minimizer and $\delta E$ be any admissible direction of variation in the tangent space of plausible volume-effect processes, then the critical point condition is given by
+\begin{align*}
+0 =& \frac{dC}{dE}(\delta E) = \partial \Phi(E_T) \delta E_T + \int_0^T \partial g_t(h_t(E_t)) \partial h_t (E_t) \delta E_t dt \\
+=& \partial \Phi(E_T) \left(\delta X_T - \int_0^T \partial h_t(E_t) \delta E_t dt \right) + \int_0^T \partial g_t(h_t(E_t)) \partial h_t (E_t) \delta E_t dt = \int_0^T (\partial g_t(h_t(E_t)) - \partial \Phi(E_T))\partial h_t (E_t) \delta E_t dt
+\end{align*}
+In the computation above, we invoked the constraint that $X_T \equiv \bar{X}$ so $\delta X_T \equiv 0$. In ``nice'' cases, this requires that $\partial g_t(h_t(E_t)) = \partial \Phi(E_T)$ for a.e. $t\in [0,T]$, i.e. $\partial g_t(h_t(E_t))$ is a constant independent of time $t$. Notice that if $h$ is time-homogeneous, then $\partial g(h(E_t))$ is a constant means that $E_t$ is a constant, which reduces to a Type A strategy in the original paper. Of course, a Type B strategy does not satisfy this constant $E$ condition, but it has a piecewise constant $E$. To mitigate this glitch, one needs to consider distributional derivatives instead of classical ones. Nonetheless, the Euler-Lagrange equation does gives us hints of the optimum. Other than the issue of regularity of functions, one do have to keep in mind that the Euler-Lagrange equation only specifies critical points (if interpreted classically), but minimizers are not necessarily critical points and critical points are not necessarily minimizers. Both coincides only at ``special'' cases, for example, Subsection 4.1 in the original paper, in which a Type A strategy is both a minimizer and a critical point of the cost functional.
+
+The second way to minimize the functional $C$ is dynamic programming. Instead of considering a single minimization problem, dynamic programming studies a family of problems parametrized by state variables, connects all these problems using the dynamic programming principle, and derives a PDE called Hamilton-Jacobi-Bellman (HJB) equation satisfied by the minimal values of parametrized problems. We use the time $t$, the quantity level of the book $e$, and remaining quantity $x$ to purchase as state variables. Let $v(t,e,x)$ stands for the \emph{minimal} purchasing cost of $x$ \emph{additional} shares when the time is $t$ and the book is at level $e$, i.e. $v(t,e,x) := \inf \left\{ \Phi(E_T) - \Phi(e) + \int_t^T g_s(h_s(E_s)) ds : E_{t} = e, E_T - e + \int_t^T h_s(E_s) ds = x \right\}$. The minimal $C(X)$ we are looking for is $v({0^-},0,\bar{X})$ (as we have $E_{0^-}=0$ to allow possible jumps at time $0$). It is clear by definition that $v(T,e,x)=0$ if $x\le 0$ and $v(T,e,x)=+\infty$ if $x>0$. For other parametrized minimizations, dynamic programming principle proposes that the Hamiltonian $v(t,E_{t},\bar{X}-X_{t}) + \Phi(E_{t}) + \int_0^t g_s(h_s(E_s)) ds$ be a non-decreasing function of time $t$ for all admissible strategies $X$, and be constant in time $t$ for optimal strategy $X$. In particular, for jumps, we have 
+\begin{align*}
+v(t^-, E_{t^-}, \bar{X}-X_{t^-}) + \Phi(E_{t^-}) &= \inf_{\Delta X_t \ge 0} \left\{ v(t,E_t,\bar{X}-X_t) + \Phi(E_t) \right\} \\
+&= \inf_{\Delta X_t \ge 0} \left\{ v(t, E_{t^-}+\Delta X_t, \bar{X}-X_{t^-}-\Delta X_t) + \Phi(E_{t^-} + \Delta X_t) \right\},
+\end{align*}
+that is $v(t^-,e,x) + \Phi(e) = \inf_{a\ge 0} \left\{v(t,e+a,x-a) + \Phi(e+a) \right\}$. At the instance before terminal time $T$, one must have $v(T^-,e,x)=\Phi(e+x)-\Phi(e)$ if $x>0$ and zero otherwise, as the only way to achieve the purchasing target (avoiding infinite cost) is to buy $a=x>0$ shares immediately. In differential form (ignoring possible jumps), using the equation $X_t = E_t + \int_0^t h_s(E_s) ds$, one has
+\begin{align*}
+0 &= \partial_t v + g_t(h_t(e)) + \inf_{a\ge 0} \left\{ (\partial \Phi(e) + \partial_e v) (a-h_t(e)) - a \partial_x v \right\} \\
+&= \partial_t v + g_t(h_t(e)) + \inf_{a\ge 0} \left\{ (\partial \Phi(e) + \partial_e v - \partial_x v) a - h_t(e) (\partial \Phi(e) + \partial_e v) \right\} = \partial_t v - h_t(e) \partial_e v,
+\end{align*}
+since either $a=0$ or $\partial \Phi(e) + \partial_e v - \partial_x v = 0$. To have the infimum well-posed, one must impose that $\partial \Phi(e) + \partial_e v - \partial_x v \ge 0$. If $\partial \Phi(e) + \partial_e v - \partial_x v > 0$, then it is clear that $a=0$, i.e. the rate of purchase is zero at those particular moments. However, if $\partial \Phi(e) + \partial_e v - \partial_x v = 0$, then the HJB equation \emph{alone} does not give us any information about the optimal trading strategy, and we have to infer this piece of information from something else. In general HJB equation is difficult to solve explicitly, but if one has a solution with sufficient regularity in some special case, then a standard verification argument will give us the minimal cost of the problem. Moreover, if one can infer the optimal trading strategy from HJB, then the strategy is usually given in the so-called feedback form, i.e. a function in terms of the state variables. On the contrary, one does not obtain a feedback form strategy from the Euler-Lagrange equation.
+
+Both ways above involve solving differential equations, which rely on some regularities of the solutions and hence some restrictions of the inputs. A promising way to get around the technicalities of differential equations is (convex) duality. In addition to the original constrained optimization problem which is called the primal problem, the method introduces a related problem called the dual problem which plays the same role as Lagrange multiplier in classical calculus. The advantage of duality method is its minimal assumptions on regularities of functions, and all one has to do is to check zero duality gap. Let $(\lambda,\mu)$ be the dual variable, and define $D(\lambda,\mu) := \inf \left\{ \Phi(E_T) + \int_0^T g_s(h_s(E_s)) ds - \lambda \int_0^T h_s(E_s) ds - \mu E_T : X_{0^-} =0, E_t = X_t - \int_0^t h_s(E_s) ds \right\}$. Denote the convex duals of $\Phi$ and $g_s$ by $\Phi^\ast(y):=\sup_{x\ge 0}\left\{xy - \Phi(x)\right\}$ and $g_s^\ast(y):=\sup_{x\ge 0}\left\{xy - g_s(x)\right\}$ respectively. Then for admissible trading strategies $X$, we have
+\begin{align*}
+C(X) &= \Phi(E_T) + \int_0^T g_s(h_s(E_s)) ds = \Phi(E_T) + \int_0^T g_s(h_s(E_s)) ds - \lambda \int_0^T h_s(E_s) ds - \lambda E_T + \lambda \bar{X} \\
+& \ge D(\lambda, \lambda) + \lambda \bar{X} \left( \ge -\Phi^\ast(\lambda) - \int_0^T g_s^\ast(\lambda) ds + \lambda \bar{X} \right)
+\end{align*}
+Taking supremum over all $\lambda \ge 0$ of the right hand side, we have a lower bound on the minimum trading cost. If there is zero duality gap, i.e. equality could be achieved, then one can figure out the optimal trading strategy by first finding the maximizer $\lambda^\ast$ of $\sup_{\lambda \ge 0}\left\{D(\lambda,\lambda) + \lambda \bar{X} \right\}$, and then the minimizer of $D(\lambda^\ast, \lambda^\ast)$. It seems at first that we complicate the problem by layering over one more optimization, but the dual problem involving $D(\lambda,\lambda)$ is actually far simpler as it is merely one-dimensional. In the case that the resiliency function $h(s,x)$ is time-homogeneous and so is $g_s = g$, the dual function in the parenthesis above can be written down explicitly. A sufficient condition for zero-duality gap is that $g$ is convex. We believe that the original paper was inspired by this duality approach to consider Type A strategy first. It should be noted that in other cases, the issue of duality gap is quite delicate and the one that requires most attention.
+
+Here is a brief review of this subsection before we move on to tackle the general case of time-inhomogeneous resiliency. We have outlined three methods to solve the problem, each with its own convenience and technicalities. Even though these methods may not assemble to a full solution, they would serve as starting points and give us significant inspirations.
+
+
+\subsection{Separable resiliency and time-homogeneous elasticity: a special case}
+Using the three methods above, we discover one special case of time-dependent resiliency, whose corresponding optimal strategy could be achieved by a Type B one in the original paper. We think it is worth documenting, and introduce the following two concepts. Throughout this subsection, we impose that $A$ is a cadlag (nonnegtaive) $\mathcal{H}^1$ martingale, and $X$ is non-decreasing, cadlag and predictable;
+
+\begin{defn}[Elasticity of resiliency and separable resiliency]
+Let $h:[0,T]\times \mathbb{R}_+ \to \mathbb{R}_+$ be a resiliency function such that $h(t,0)=0, \forall t\in[0,T]$ and the collection $\{h(t,\cdot)\}_{t\in[0,T]}$ is locally Lipschitz uniformly in time (and hence $\partial_x h(t,x)$ exists for almost everywhere $x$ and all $t$). The quantity $\frac{\partial_x h(t,x)}{h(t,x)} = \partial_x \ln h(t,x)$ is called the elasticity of resiliency at time $t$ and depth $x$. If the resiliency is of the form $h(t,x) = \zeta(t) H(x)$ for some bounded nonnegative function $\zeta:[0,T] \to \mathbb{R}_+$ and some nonnegative locally Lipschitz function $H:\mathbb{R}_+ \to \mathbb{R}_+$ with $H(0)=0$, then $h$ is called a separable resiliency function.
+\end{defn}
+
+We remark that a resiliency function is separable if and only if its elasticity is time-homogeneous. The significance of separable resiliency and hence time-homogeneous elasticity is reflected in the following theorem.
+
+\begin{thm}[Optimality of Type A and Type B strategy under separable resiliency]
+If the resiliency function $h$ is separable, then there exists a Type B strategy that minimizes the trading cost $C(X)$ over all admissible trading strategies $X$. Moreover, if the function $g_t:\mathbb{R}_+ \to \mathbb{R}_+$ is convex for all $t\in [0,T]$ such that $\zeta(t)\ne 0$, or equivalently, the function $G:\mathbb{R}_+ \to \mathbb{R}_+$ given by $G(y):= y \psi(\underline{H}^{-1}(y))$ is convex, then a minimizing Type B strategy could be of Type A.
+\end{thm}
+
+The proof of the theorem is nothing but a change of measure of time. Observe that
+\begin{align*}
+E_t &= X_t - \int_0^t h(s,E_s) ds = X_t - \int_0^t H(E_s) [\zeta(s)ds], \quad \textrm{and} \\
+C(X) &= \Phi(E_T) + \int_0^T \psi(E_s) h(s,E_s) ds = \Phi(E_T) + \int_0^T \psi(E_s) H(E_s) [\zeta(s)ds] \ge \Phi(E_T) + \int_0^T G(H(E_s)) [\zeta(s)ds].
+\end{align*}
+The dynamic of the book and the cost functional are of the same form as in the case of time-homogeneous resiliency, if the clock follows the measure given by $\zeta(t)dt$ instead of the usual Lebesgue measure $dt$. Under the tweaked clock, the resiliency $H$ is homogeneous, and we invoke Theorem 4.2 and 4.5 of the original paper to get the new theorem for separable resiliency.
+
+\begin{rem}
+It is not hard to see why we name this special case of time-dependence of resiliency ``separable'' after the definition and the proof. But what leads us to consider such form of time-dependence at the very first place? Before finishing this subsection, we give our thought process, which is neither rigorous nor comprehensive. Assuming that functions possess sufficient regularities for us to take derivatives, Euler-Lagrange equation in the previous subsection mandates that a minimizer will make $\partial g_t(h_t(E_t))$ a constant. Suppose that $h_t$ is strictly increasing, and recall that $g_t(y) := y \psi(h_t^{-1}(y))$, we have that $\partial g_t(y) = \psi(h_t^{-1}(y)) + \frac{y \partial \psi(h_t^{-1}(y))}{\partial h_t(h_t^{-1}(y))}$. Thus, $\partial g_t(h_t(E_t)) = \psi(E_t) + \frac{\partial \psi(E_t)}{\partial \ln h_t(E_t)}$ if derivatives make sense. It is obvious that one only needs homogeneous elasticity instead of homogeneous resiliency for a (piecewise) constant volume effect process $E_t = e, \forall t\in(t_0,t_1)$ to be a minimizer. This is the very point where we start investigating separable resiliency.
+\end{rem}
+
+
+\subsection{Critical point minimizers and spoofing (permitting limit sell)}
+The approach of Euler-Lagrange equation also reveals another interesting phenomenon not present in the case of time-homogeneous resiliency: if the investor is allowed to submit limit sell orders \emph{at the actual best ask price without changing the equilibrium shape of the book} in addition to market buy orders, then he may lower his purchasing cost in some cases of time-inhomogeneous elasticity but never in the case of time-homogeneous elasticity. We shall explain in the following lemma ({\color{red} unfinished, technical obstacle in defining the problem}) the unnecessity of limit sells for time-homogeneous resiliency (and hence elasticity), and exhibit an example in which submitting limit sell orders will strictly lower the purchasing cost. In a nutshell, the reason why limit sells may lower purchasing costs is that the investor may improve the marginal prices paid by undercutting the actual ask prices, at the expense of a slower rate of purchasing.
+
+{\color{red}
+In this subsection, we shall made the following assumptions:
+\begin{itemize}
+\item $A$ is a cadlag (nonnegative) $\mathcal{H}^1$ martingale;
+\item $X$ is \emph{of finite variation}, cadlag and predictable, with $X_{0^-}=0$, $X_T = \bar{X}$ and $X_t \ge 0, \forall t\in[0,T]$;
+\item $h$ is nonnegative, $h(\cdot, 0) \equiv 0$ and $\{h(t,\cdot)\}_{t\in[0,T]}$ is locally Lipschitz uniformly in time $t$.
+\end{itemize}
+In particular, the equilibrium shape of the book is unchanged and still described by the cost function $\Phi$, and the volume effect process $E$ still follows the dynamic $E_t = X_t - \int_0^t h(s,E_s) ds$ and also has finite variation, in which we interpret $X$ as \emph{the difference between cumulative market buy orders and outstanding limit sell orders submitted by the investor}. The nonnegative holding constraint forbids short-selling (though short-selling or undercutting the hypothetical best ask price $A$ would not benefit the investor anyway). Since the investor is the only liquidity demander of the ask side of the book, the investor has to cancel, or equivalently trade against, his \emph{own} outstanding limit sell orders by the end of the trading interval, and hence his stock holding is the same as his cumulative market buy orders at time $T$, i.e. $X_T \equiv \bar{X}$. Under these assumptions and the restriction that the investor has zero outstanding limit orders at time $T$, the purchasing cost is the same as before: $C(X) = \Phi(E_T) + \int_0^T \psi(E_t) h(t,E_t) dt$. (However, I haven't found a way to write down the constraint that the quantity of outstanding limit orders is zero. In general, we have that $C(X) \ge \Phi(E_T) + \int_0^T \psi(E_t) h(t,E_t) dt$.)
+
+\begin{lem}[Unnecessity of limit sells for homogeneous resiliency]
+If the resiliency $h:[0,T]\times \mathbb{R}_+ \to \mathbb{R}_+$ is time-homogeneous, i.e. $h(t,\cdot) = h(0,\cdot), \forall t\in[0,T]$, then there exists a Type B strategy $X$ that minimizes trading cost $C(X)$ over all strategies allowing limit sell orders at the actual best ask price, and this optimal strategy is the same as the one if limit sell orders are not allowed.
+\end{lem}
+
+\begin{proof}
+A technically sound proof is possible only after the new problem is properly defined. I have some difficulties defining the problems now.
+\end{proof}
+
+In the case when limit sell is not allowed, if the optimal volume effect process $\hat{E}$ is a critical point of the functional $E\mapsto C(X)$, then it is also the optimum in the case when the investor can post limit sells. We call such optimum a critical point minimizer. The optima proposed in the original paper are actually all critical point minimizers, so posting limit sells would not further reduce trading costs. 
+}
+
+To finish this subsection, we showcase an example with time-inhomogeneous elasticity, in which there is no critical point minimizers if limit sells are prohibited, and the critical point minimizer can only be attained by submitting a limit sell order.
+
+\begin{eg}[Critical point minimizer via limit sell orders]
+As in the original paper, assume that $A\equiv 0$ without loss of generality. Let
+\begin{align*}
+& \Phi(x) := \frac{1}{2} x^2, \textrm{ or equivalently } \psi(x) = \partial \Phi(x) = x, \textrm{ and } \\
+& h(t,x) :=
+\begin{cases}
+H_1(x) := H(2x), & t\in[0,T/2) \\
+H_2(x) := H(x), & t\in[T/2,T]
+\end{cases}, \textrm{ where }
+H(x) :=
+\begin{cases}
+ex, & 0\le x\le 1 \\
+e^x, & x>1
+\end{cases} \textrm{ is strictly increasing and $C^1$}.
+\end{align*}
+Then $g(t,y) := y\psi(h_t^{-1}(y)) =
+\begin{cases}
+G_1(y) := y\psi(H_1^{-1}(y)) = \frac{1}{2}y H^{-1}(y), & t\in[0,T/2) \\
+G_2(y) := y\psi(H_2^{-1}(y)) = y H^{-1}(y), & t\in[T/2,T] \\
+\end{cases}$.
+Compute the inverse $H^{-1}(y) =
+\begin{cases}
+y/e, & 0\le y\le e \\
+\ln y, & y>e
+\end{cases}$, and the derivative $\frac{d}{dy}\left(yH^{-1}(y)\right) = H^{-1}(y) + \frac{y}{H'(H^{-1}(y))} =
+\begin{cases}
+2y/e, & 0\le y \le e \\
+\ln y + 1, & y>e
+\end{cases}$, which is also strictly increasing and continuous, we know that both $G_1$ and $G_2$ are strictly convex with $2 G_1'(y) = G_2'(y) = \frac{d}{dy}\left(y H^{-1}(y)\right)$. Therefore, we have the following by Jensen's inequality:
+\begin{align*}
+C(X) &= \Phi(E_T) + \int_0^T g(t,h(t,E_t)) dt = \Phi(E_T) + \int_0^{T/2} G_1(H_1(E_t)) dt + \int_{T/2}^T G_2(H_2(E_t)) dt \\
+&\ge \Phi(E_T) + \frac{T}{2} G_1\left(\frac{1}{T/2} \int_0^{T/2} H_1(E_t) dt\right) + \frac{T}{2} G_2\left(\frac{1}{T/2} \int_{T/2}^T H_2(E_t) dt\right) \\
+&= \Phi(E_T) + \frac{T}{2} G_1\left(\frac{X_{T/2} - E_{T/2}}{T/2}\right) + \frac{T}{2} G_2\left(\frac{(X_T - E_T) - (X_{T/2} - E_{T/2})}{T/2}\right) \\
+&= \Phi(\bar{X}-Y_1-Y_2) + \frac{T}{2} G_1\left(\frac{Y_1}{T/2}\right) + \frac{T}{2} G_2\left(\frac{Y_2}{T/2}\right) =: G(Y_1, Y_2),
+\end{align*}
+where $Y_1 := X_{T/2} - E_{T/2}$, $Y_2 := (X_T - E_T) - (X_{T/2} - E_{T/2})$, and equality holds if and only if
+$$E_t =
+\begin{cases} E_0 = H_1^{-1}\left( \frac{Y_1}{T/2} \right) = \frac{1}{2} H^{-1}\left( \frac{Y_1}{T/2} \right) , & \forall t\in[0,T/2) \\
+E_{T/2} = H_2^{-1}\left( \frac{Y_2}{T/2} \right) = H^{-1}\left( \frac{Y_2}{T/2} \right), & \forall t\in[T/2,T)
+\end{cases}.$$
+So the minimizing volume effect process $E$ must be constant in the interiors of both halves respectively and satisfy the equations above, no matter whether limit sells are allowed or not. We shall assume these equations from here on. Observe that the function $G$ in this case is strictly convex and $C^1$, and hence its minimum is attained at the unique critical point in the interior (if any) or on the boundary. Differentiating $G$ to solve for critical points, we have
+$$G_1'\left(\frac{Y_1}{T/2}\right) = \partial \Phi(\bar{X}-Y_1-Y_2) = G_2'\left(\frac{Y_2}{T/2}\right).$$
+This system of equations has a well-defined solution which minimizes the function $G$ over all possible pairs of $(Y_1, Y_2)$. From our computations above, note that $G_i' \ge H_i^{-1}$ and $\partial \Phi(x) = \psi(x) = x$, we have that $E_T = \bar{X}-Y_1-Y_2 = \partial \Phi(\bar{X}-Y_1-Y_2) = G_i'\left(\frac{Y_i}{T/2}\right) \ge H_i^{-1}\left(\frac{Y_i}{T/2}\right) = \begin{cases} E_0, & i=1 \\ E_{T/2}, & i=2 \end{cases}$. This inequality guarantees that there is no outstanding limit order of the investor at the terminal time if limit orders are ever used to implement the critical point minimizer. If the investor cannot use limit sell orders, then the jumps at time $T/2$ and $T$ cannot be negative, and we must impose the additional condition $E_0 = E_{\frac{T}{2}^-}\le E_{\frac{T}{2}} = E_{T^-} \le E_T$ in looking for a minimum.
+
+Now we are ready to give a concrete numerical example whose critical point minimizer cannot be achieved without a discrete limit sell order at time $T/2$. For convenience, set $T:=2$ so that $T/2 =1$. Let $\bar{X} := 2+e+e^3$. We claim that $Y_1 = e^3$ and $Y_2 = e$, or equivalently $E_t =
+\begin{cases}
+E_0 = 3/2, & t\in[0,1) \\
+E_1 = 1, & t\in[1,2) \\
+E_2 = 2, & t=2
+\end{cases}$
+is the critical point minimizer. The investor has to post a limit sell order of size $1/2$ at time $1$ to implement this strategy. To verify it is indeed the minimizer, it suffices to check the system of equations above:
+\begin{align*}
+G_1'\left(\frac{Y_1}{T/2}\right) = \frac{1}{2}(\ln e^3 + 1) &= 2, & E_0 = H_1^{-1}\left(\frac{Y_1}{T/2}\right) = \frac{1}{2}\ln e^3 = 3/2 \\
+\partial \Phi(\bar{X}-Y_1-Y_2) &= 2, & E_2 = \bar{X}-Y_1-Y_2 = 2 \\
+G_2'\left(\frac{Y_2}{T/2}\right) = \ln e + 1 &= 2, & E_1 = H_2^{-1}\left(\frac{Y_2}{T/2}\right) = \ln e = 1
+\end{align*}
+The corresponding minimal trading cost is then $C(X) = \Phi(2) + \frac{1}{2} e^3 \ln e^3 + e \ln e = 2+e+\frac{3}{2}e^3$.
+\end{eg}
+
+
+\subsection{General existence and robustness via abstract properties: continuity and compactness}
+The past two subsections are devoted to special cases of the problem with time-dependent resiliency function. It is fortunate that we can explicitly write down the solution in these generalizations of the original model. However, as one makes fewer assumptions, the problem becomes more general and complex, and one should not expect to have a tractable form of solution. Instead of wondering what the solution is or looks like, one should focus on the more fundamental question how the solution responds to perturbations of inputs, and considers practical algorithms to compute numerical solutions given input data. This subsection will address the theoretical question, which helps laying a framework for computations. Two abstract mathematical properties, namely continuity and compactness, play a key role throughout this endeavor.
+
+Unlike the previous section where limit sell orders are allowed, we require that the investor can only submit market buy orders. Specifically, assume that:
+\begin{itemize}
+\item $A$ is a cadlag (nonnegative) $\mathcal{H}^1$ martingale;
+\item $X$ is non-decreasing, cadlag, and predictable, with $X_{0^-}=0$ and $X_T = \bar{X}$;
+\item $h$ is nonnegative, $h(\cdot, 0)\equiv 0$ and $\{h(t,\cdot)\}_{t\in[0,T]}$ is locally Lipschitz uniformly in time $t$, i.e. $\forall K > 0, \exists C>0, \forall x,y \in [0,K], t\in[0,T], \abs{h(t,x)-h(t,y)} \le C\abs{x-y}$.
+\end{itemize}
+
+The volume effect process $E$ follows the dynamics defined in the original model: $E_t = X_t - \int_0^t h(s,E_s) ds$, which is well-posed (with respect to the uniform topology $L^\infty$ on $\mathbb{D}([0,T])$, the space of all cadlag functions over $[0,T]$) under the assumption of local Lipschitzness uniformly in time. This exact same technical condition also asserts $L^\infty$-continuity of the operator $X\mapsto E$. Recall that $C(X) = \Phi(E_T) + \int_0^T \psi(E_t) h(t,E_t) dt$ where $\psi$ is increasing and left-continuous and hence lower semicontinuous (lsc), thus we can conclude that $E\mapsto C(X)$ is $L^\infty$-lsc. Therefore, the functional $X\mapsto C(X)$ is $L^\infty$-lsc, meaning that if $X^n \xrightarrow{L^\infty} X$, then $\liminf_{n\to\infty} C(X^n) \ge C(X)$. Lower semicontinuity coupled with compactness of the search space will guarantee the existence of a minimizer.
+
+However, there are two issues of the uniform topology here in this problem, one more technical and the other more realistic. First, the functional $X\mapsto C(X)$ is not $L^\infty$-coercive, i.e. the search space $\{X:C(X) \le K\}$ is not $L^\infty$-compact for some large enough $K<\infty$, because $X$ could jump and we have no further restrictions of the jump times. Without compactness, it is hard to prove existence of minimizers. Second, within the space $(\mathbb{D}([0,T]), L^\infty)$, we can never approximate a strategy $X$ with discrete orders (jumps) using continuous strategies. Or if we don't know the exact jump times of a strategy $X$, we still cannot approximate it using strategies with the same number of jumps. Inflexibility in approximating jumps is an inherent caveat of the uniformly topology that we would like to get around for our purpose, because apriori we have few clues of the jump times of a cost-minimizing strategy.
+
+Luckily, Skorokhod\cite{skorokhod1956limit} had proposed a family of topologies on $\mathbb{D}$ named after him to accommodate different jump approximations, and they are called J1, J2, M1, and M2 respectively. In the following, we briefly discuss the choice of our topology without overwhelming technicalities, and refer interested readers to \citeauthor{skorokhod1956limit} \citeyear{skorokhod1956limit} paper for comprehensive studies of these topologies. All four topologies coincide with $L^\infty$ on the space of continuous functions, and it is exactly the ways they distinguish jump approximations that make them different. Since we are dealing with monotone functions, M2 and M1 topologies are the same while J2 and J1 topologies are the same as well. But continuous functions are closed in J1 topology, which implies that one cannot use continuous functions to approximate jumps in J1, and thus we shall consider M1 topology only. It turns out that M1 topology fits into our problem perfectly, and the idea has a great financial interpretation as well. Intuitively, one views a trading strategy as a continuous parametric curve (or a graph) in the product space of time and quantities purchased, and two strategies are considered closed in M1 if their corresponding curves in the product space could be made closed to each other. This perspective effectively introduces a strategy-dependent trading time different than the physical time, and turns a jump in the strategy under the physical time continuous under the trading time. Coupled with extra assumptions, we are able to prove existence of a minimizer, continuity of the cost functional, and robustness of the problem.
+
+Let's begin with some basics of Skorokhod M1 topology. Consider the product space $[0,T]\times \mathbb{R}$ equipped with $L^1$-norm (the Manhattan distance). Let $X:[0,T]\to \mathbb{R}$ be a cadlag function, define its graph to be $\Gamma_X := \cup_{t\in[0,T]}\left(\{t\} \times [X(t^-), X(t)]\right) = \left\{ \left(t,aX(t^-)+(1-a)X(t)\right) : t\in[0,T], a\in[0,1] \right\}$ (one may feel free to fix $X(0^-):=0$ for our purpose). A parametrization of $X$ is a continuous curve $(t,x):[0,1]\to [0,T]\times\mathbb{R}$ such that $t$ is increasing and $(t,x)([0,1])=\Gamma_X$. In other words, $\Gamma_X$ is the usual plot of a cadlag function by joining the gaps of jumps with straight lines together, and a parametrization of the function is a usual parametrization of the joined curve. 
+
+\begin{defn}[Skorokhod M1 distance and topology]
+Define Skorokhod M1 distance on $\mathbb{D}([0,T])$ by
+$$d_{M1}(X,Y) := \inf\left\{ \norm{(t,x)-(s,y)}_{L^\infty([0,1])} : (t,x) \textrm{ and } (s,y) \textrm{ parametrize } X \textrm{ and } Y, \textrm{ respectively} \right\}, \forall X,Y \in \mathbb{D}([0,T]).$$
+Skorokhod M1 distance $d_{M1}$ is a well-defined metric on $\mathbb{D}([0,T])$, and Skorokhod M1 topology is the topology induced by this metric. In particular, $X^{n} \xrightarrow{d_{M1}} X$ iff $(t^n,x^n) \xrightarrow{L^\infty} (t,x)$ for some parametrizations $(t^n,x^n)$ of $X^n$ and $(t,x)$ of $X$.
+\end{defn}
+
+\begin{rem}
+While $\mathbb{D}([0,T])$ is a vector space equipped with the M1 topology, $(\mathbb{D}([0,T]), M1)$ is not a topological vector space, because addition is not continuous with respect to M1. In other words, the metric $d_{M1}$ is not translation-invariant and it is not enough to study the M1-neighborhood of the zero function.
+\end{rem}
+
+The definition of M1 topology involves parametrizations of cadlag functions, which will vary as the functions and hence inconvenient in applications. A common parametrization in computation is the arc-length parametrization (if the cadlag function is of finite variation), whose speed is constant and equal to the length of the curve. A way to get around the issue of parametrizations in M1-topology is the following necessary and sufficient condition of M1-convergence given in \citet{skorokhod1956limit}.
+\begin{thm}[M1-convergence in terms of M1 modulus of continuity]
+A necessary and sufficient condition for $X^n \xrightarrow{M1} X$ is that both of the followings hold:
+\begin{enumerate}[(a)]
+\item $X^n(t) \to X(t), \forall t\in S$ for some set $S$ dense in $[0,T]$ and $S\supset\{0,T\}$;
+\item $\lim_{c\to 0} \limsup_{n\to\infty} \Delta_{M1}(c;X^n) =0$, where $\Delta_{M1}(c;Y) := \sup\left\{{\rm dist}(Y(t_2), [Y(t_1),Y(t_3)]) : t_2-c < t_1 < t_2 < t_3 < t_2+c \right\}$ is the M1 modulus of continuity of the cadlag function $Y$.
+\end{enumerate}
+\end{thm}
+
+After knowing the definition and characterization of M1 topology, we need a condition for a set to be M1-compact, which is needed in proving the existence of a minimizer. Very similar to Arzela-Ascoli, such a condition is also given in \citet{skorokhod1956limit}.
+\begin{thm}[Arzela-Ascoli for M1-compactness]
+A set $K\subseteq \mathbb{D}([0,T])$ is precompact in M1 topology if and only if $\sup_{X\in K} \norm{X}_{L^\infty([0,T])} < \infty$ and $\lim_{c\to 0} \sup_{X\in K} \Delta_{M1}(c;X) = 0$.
+\end{thm}
+
+Now consider the set of all admissible purchasing strategies $\mathcal{A}:=\left\{X\in \mathbb{D}([0,T]) : X_{0^-}=0, X_T = \bar{X}, X \textrm{ is non-decreasing} \right\}$. It is easy to see either from the arc-length parametrization (fixed length $T+\bar{X}$) or from the M1-compactness criterion that $\mathcal{A}$ is compact in M1. If we can show that the functional $X\mapsto C(X)$ is M1-lsc, then it follows that a minimizer exists. Since M1-topology involves the continuity of the time variable $t$, we assume the additional assumption that $h$ is further equi-continuous in time $t$, i.e. $\forall \epsilon>0, \exists \delta>0, \forall x\in\mathbb{R}_+, s,t\in[0,T], \abs{s-t}<\delta \Rightarrow \abs{h(s,x)-h(t,x)}<\epsilon$. Then we claim that both $X\mapsto E$ and $E\mapsto C(X)$ are M1-continuous.
+
+\begin{lem}[M1-continuity of limit order book dynamic and cost functional]
+Assume that $h$ is locally Lipschitz in space $x$ uniformly in time $t$ and equi-continuous in time $t$ uniformly in space $x$. Then with respect to M1 topology, the function
+$$\mathcal{A} \ni X \mapsto \left\{ E_t = X_t - \int_0^t h(s,E_s) ds \right\}_{t\in[0,T]} \in \mathbb{D}([0,T])$$
+is continuous, and the function
+$$\mathbb{D}([0,T]) \ni E \mapsto \Phi(E_T) + \int_0^T \psi(E_t) h(t,E_t) dt \in \mathbb{R}$$
+is lower-semicontinuous. If further $\psi$ is continuous, then the latter function is also continuous. 
+\end{lem}
+\begin{proof}
+Fix a cadlag functions $X\in \mathcal{A}$. Consider its arc-length parametrization $(t,x)$ of $X$, so the function $(t,x):[0,1] \to [0,T]\times \mathbb{R}_+$ is Lipschitz and $t'+x' \equiv T+\bar{X}$ with $t',x'\ge 0$. Rewrite the differential equation defining the volume effect process $E$ as follows by setting $e(\tau) := E_{t(\tau)}$ whenever $x(\tau)=X_{t(\tau)}$:
+\begin{align*}
+E_t &= X_t - \int_0^t h(s,E_s) ds \\
+E_{t(\tau)} &= X_{t(\tau)} - \int_0^{\tau} h(t(\sigma),E_{t(\sigma)}) d t(\sigma) \\
+e(\tau) &= x(\tau) - \int_0^{\tau} h(t(\sigma),e(\sigma)) t'(\sigma) d\sigma
+\end{align*}
+Extend this equation to all $\tau\in[0,1]$, then $(t,e)$ is a parametrization of $E$. In particular, when $X$ has a jump, i.e. $t'(\tau)=0$ over $\tau\in[a,b]$, we have $e'(\tau)=x'(\tau)=T+\bar{X}$, which says that $E$ changes at the same pace as $X$.
+
+Take another $\tilde{X}\in \mathcal{A}$ with arc-length parametrization $(\tilde{t},\tilde{x})$. Denote its corresponding volume effect process by $\tilde{E}$ with parametrization $(\tilde{t},\tilde{e})$ obtained as above. Compute the difference between parametrizations of $\tilde{E}$ and $E$: $\forall \tau\in[0,1]$,
+\begin{align*}
+\tilde{e}(\tau) - e(\tau) &= \tilde{x}(\tau) - x(\tau) - \int_0^\tau \left[h(\tilde{t}(\sigma),\tilde{e}(\sigma)) \tilde{t}'(\sigma) - h(t(\sigma),e(\sigma)) t'(\sigma) \right] d\sigma \\
+&= \tilde{x}(\tau) - x(\tau) - \int_0^\tau \left\{ [h(\tilde{t}(\sigma),\tilde{e}(\sigma)) - h(t(\sigma),\tilde{e}(\sigma))] + [h(t(\sigma),\tilde{e}(\sigma)) - h(t(\sigma),e(\sigma))] \right\} \tilde{t}'(\sigma) d\sigma \\
+&\qquad - \int_0^\tau h(t(\sigma),e(\sigma)) [\tilde{t}'(\sigma) - t'(\sigma)] d\sigma
+\end{align*}
+Suppose that $\tilde{X} \xrightarrow{M1} X$, then $(\tilde{t},\tilde{x}) \xrightarrow{L^\infty} (t,x)$, and hence $\tilde{t}' \xrightharpoonup{\ast} t'$ from integration by parts. So take $\tilde{X}$ close enough to $X$ in M1, we have $\forall \tau\in[0,1]$
+\begin{align*}
+\abs{\tilde{e}(\tau) - e(\tau)} &\le \abs{\tilde{x}(\tau) - x(\tau)} + \int_0^\tau \left\{ \left|h(\tilde{t}(\sigma),\tilde{e}(\sigma)) - h(t(\sigma),\tilde{e}(\sigma))\right| + \left|h(t(\sigma),\tilde{e}(\sigma)) - h(t(\sigma),e(\sigma))\right| \right\} \tilde{t}'(\sigma) d\sigma \\
+&\qquad + \left| \int_0^\tau h(t(\sigma),e(\sigma)) [\tilde{t}'(\sigma) - t'(\sigma)] d\sigma \right| \\
+&\le \epsilon + \int_0^\tau \left\{\epsilon+C\abs{\tilde{e}(\sigma) - e(\sigma)} \right\} \tilde{t}'(\sigma) d\sigma
+\le \epsilon(1+T) + C(T+\bar{X}) \int_0^\tau \abs{\tilde{e}(\sigma)-e(\sigma)} d\sigma \\
+\abs{\tilde{e}(\tau) - e(\tau)} &\le \epsilon(1+T) \exp\left(C(T+\bar{X})\tau\right) \textrm{ from above and Gronwall's inequality}
+\end{align*}
+Therefore, if $\tilde{X} \xrightarrow{M1} X$, then $\epsilon \to 0$ and $\tilde{e} \xrightarrow{L^\infty} e$, that is $\tilde{E} \xrightarrow{M1} E$ as claimed.
+
+Now fix a cadlag function $E\in \mathbb{D}([0,T])$ and let $\tilde{E} \xrightarrow{M1} E$, i.e. there are parametrizations $(\tilde{t},\tilde{e}) \xrightarrow{L^\infty} (t,e)$. Rewrite the cost functional $E \mapsto \Phi(E_T) + \int_0^T \psi(E_t) h(t,E_t) dt$ in terms of parametrization:
+$$(t,e) \mapsto \Phi(e(1)) + \int_0^1 \psi(e(\sigma)) h(t(\sigma),e(\sigma)) t'(\sigma) d\sigma$$
+Since $\Phi$ is convex and hence continuous, we have $\Phi(\tilde{e}(1)) \to \Phi(e(1))$. Similarly to above, we have $\tilde{t}' \xrightharpoonup{\ast} t'$ and $h(\tilde{t},\tilde{e}) \xrightarrow{L^\infty} h(t,\sigma)$, and thus $\int_0^1 \psi(e(\sigma)) h(\tilde{t}(\sigma),\tilde{e}(\sigma)) \tilde{t}'(\sigma) d\sigma \to \int_0^1 \psi(e(\sigma)) h(t(\sigma),e(\sigma)) t'(\sigma) d\sigma$. On the other hand, $\psi$ is increasing and left-continuous, so it is lsc. As $h$ and $t'$ are both non-negative, we have by lsc of $\psi$,
+\begin{align*}
+& \liminf_{(\tilde{t},\tilde{e}) \xrightarrow{L^\infty} (t,e)} \int_0^1 \psi(\tilde{e}(\sigma)) h(\tilde{t}(\sigma),\tilde{e}(\sigma)) \tilde{t}'(\sigma) d\sigma \\
+= & \liminf_{(\tilde{t},\tilde{e}) \xrightarrow{L^\infty} (t,e)} \int_0^1 \left[\psi(\tilde{e}(\sigma))-\psi(e(\sigma)) \right] h(\tilde{t}(\sigma),\tilde{e}(\sigma)) \tilde{t}'(\sigma) d\sigma + \lim_{(\tilde{t},\tilde{e}) \xrightarrow{L^\infty} (t,e)} \int_0^1 \psi(e(\sigma)) h(\tilde{t}(\sigma),\tilde{e}(\sigma)) \tilde{t}'(\sigma) d\sigma \\
+\ge & \int_0^1 \psi(e(\sigma)) h(t(\sigma),e(\sigma)) t'(\sigma) d\sigma
+\end{align*}
+It is then immediate that the functional $E \mapsto \Phi(E_T) + \int_0^T \psi(E_t) h(t,E_t) dt$ is M1-lsc in general. If $\psi$ is continuous, then the same argument above give us M1-continuity of the functional.
+\end{proof}
+
+\begin{rem}[Alternative proof]
+The lemma above shows that the functional $\mathcal{A} \ni X \mapsto C(X) \in \mathbb{R}$ is M1-continuous by composition. There is another way to do so directly. First, one shows that $X \mapsto E$ is M1-continuous as above. Second, write $C(X) = \Phi(E_T) + \int_0^T \psi(E_t) h(t,E_t) dt = \Phi(e(1)) + \int_0^1 \psi(e(\sigma)) h(t(\sigma),e(\sigma)) t'(\sigma) d\sigma = \int_0^1 \psi(e(\sigma)) e'(\sigma) d\sigma + \int_0^1 \psi(e(\sigma)) h(t(\sigma),e(\sigma)) t'(\sigma) d\sigma = \int_0^1 \psi(e(\sigma)) x'(\sigma) d\sigma$. The conclusion follows from lower-semicontinuity of $\psi$ and weak-star convergence of $x'$.
+\end{rem}
+
+Assembling continuity and compactness, we have the following existence theorem.
+\begin{thm}[Existence of a minimizer]
+If the resiliency $h$ is locally Lipschitz in space $x$ uniformly in time $t$ and equi-continuous in time $t$ uniformly in space $x$, then there exists a strategy $X$ that minimizes the trading cost $C(X)$ over all admissible trading strategies.
+\end{thm}
+
+We see from the proof that it is not necessary $C(\tilde{X}) \to C(X)$ as $\tilde{X} \xrightarrow{M1} X$ due to lower-semicontinuity. However, since $\psi$ is left-continuous, if $\tilde{X} \xrightarrow{M1} X$ is such that $\tilde{E} \uparrow E$, then we have $C(\tilde{X}) \to C(X)$. This suggests one to approximate the volume effect process from below in order to approximate the minimal trading cost.
+
+After showing continuity and existence, we would like to see the response of trading cost to perturbations of inputs, in particular the resiliency function $h$ and the shape of the limit order book $\Phi$ (or equivalently $\psi = \partial \Phi$). This will address the robustness of the model.
+
+Fix the time span $T$ and the purchasing target $\bar{X}$. Consider a family of resiliency functions $\left\{h^{(\lambda)}\right\}_{\lambda\ge 0}$ and (marginal) price impact functions $\left\{\psi^{(\lambda)}\right\}_{\lambda\ge 0}$ satisfying the assumptions for existence of minimizers above and such that $h^{(\lambda)} \xrightarrow{L^\infty} h^{(0)}$ and $\psi^{(\lambda)} \xrightarrow{L^\infty} \psi^{(0)}$. Each pair $\left(h^{(\lambda)}, \psi^{(\lambda)}\right)$ then gives us a functional $X\mapsto E^{(\lambda)} \mapsto C^{(\lambda)}(X)$, and minimizing $C^{(\lambda)}$ is itself a problem that produces an optimal trading strategy $X^{(\lambda)}$. The following theorem asserts a form of (semi-)continuity of the function $\lambda \mapsto C^{(\lambda)}$. Leveraging on the theory of $\Gamma$-convergence \cite{GammaConv}, we may conclude that ``minimizers $X^{(\lambda)}$ `converge' to minimizer $X^{(0)}$''. However, we shall not elaborate on $\Gamma$-convergence here.
+
+\begin{thm}[Uniformly lower-semicontinuity of cost functional]
+Let $\left\{h^{(\lambda)}\right\}_{\lambda\ge 0}$ be a family of resiliency functions each locally Lipschitz in space $x$ uniformly in time $t$ and equi-continuous in time $t$ uniformly in space $x$, and $\left\{\psi^{(\lambda)}\right\}_{\lambda\ge 0}$ be a family of margin price impact functions of the limit order book each increasing, left-continuous, and vanishing at zero. Denote the corresponding total trading cost functional in terms of strategy as $\left\{C^{(\lambda)}\right\}_{\lambda\ge 0}$. If $h^{(\lambda)} \xrightarrow{L^\infty} h^{(0)}$ and $\psi^{(\lambda)} \xrightarrow{L^\infty} \psi^{(0)}$, then the following families of functions converge uniformly as $\lambda \to 0$:
+\begin{align*}
+\mathcal{A} \ni X \mapsto \left\{ E^{(\lambda)}_t = X_t - \int_0^t h^{(\lambda)}\left(s,E^{(\lambda)}_s\right) ds \right\}_{t\in[0,T]} \in \mathbb{D}([0,T]) \\
+\mathbb{D}([0,T]) \ni E \mapsto \Phi^{(\lambda)}(E_T) + \int_0^T \psi^{(\lambda)}(E_t) h^{(\lambda)}(t,E_t) dt \in \mathbb{R}
+\end{align*}
+Consequently, the cost functionals satisfy $C^{(0)} \le \liminf_{\lambda\to 0} C^{(\lambda)}$ uniformly in $X$, i.e. $\forall \epsilon>0, \exists \lambda(\epsilon)>0, \forall X\in\mathcal{A}, 0<\lambda<\lambda(\epsilon), C^{(0)}(X) \le C^{(\lambda)}(X)+\epsilon$. Furthermore, $C^{(\lambda)} \xrightarrow{L^\infty} C^{(0)}$ if $\psi^{(0)}$ is continuous.
+\end{thm}
+\begin{proof}
+Take any trading strategy $X\in \mathcal{A}$. For each $\lambda\ge 0$, let $E^{(\lambda)}$ satisfy the differential equation
+$$E^{(\lambda)}_t = X_t - \int_0^t h^{(\lambda)}\left(s,E^{(\lambda)}_s\right) ds$$
+Subtract $E^{(0)}$ from above, we have
+\begin{align*}
+\left| E^{(\lambda)}_t - E^{(0)}_t \right| &= \left| -\int_0^t \left[h^{(\lambda)}\left(s,E^{(\lambda)}_s\right) - h^{(0)}\left(s,E^{(0)}_s\right) \right] ds \right| \\
+&\le \int_0^t \left|  h^{(\lambda)}\left(s,E^{(\lambda)}_s\right) - h^{(0)}\left(s,E^{(\lambda)}_s\right)\right| + \left| h^{(0)}\left(s,E^{(\lambda)}_s\right) - h^{(0)}\left(s,E^{(0)}_s\right)\right| ds \\
+&\le T \norm{h^{(\lambda)}-h^{(0)}}_{L^\infty} + C \int_0^t \abs{E^{(\lambda)}_s-E^{(0)}_s} ds
+\end{align*}
+Then by Gronwalls' inequality, it follows that $E^{(\lambda)} \xrightarrow{L^\infty} E^{(0)}$ since $h^{(\lambda)} \xrightarrow{L^\infty} h^{(0)}$, and the convergence is independent of $X$. Because on $\mathbb{D}([0,T])$ uniform topology is stronger than M1 topology, we have that $E^{(\lambda)} \xrightarrow{M1} E^{(0)}$ as well. Thus, the functions ($X\mapsto E^{(\lambda)}$) converge uniformly as $\lambda \to 0$.
+
+The uniform convergence of the costs in terms of volume effect process $E\mapsto C(X)$ is immediately inherited from those of $\left\{\psi^{(\lambda)}\right\}_{\lambda\ge 0}$, $\left\{h^{(\lambda)}\right\}_{\lambda\ge 0}$ and integration.
+
+Finally, the uniform (semi-)continuity of $\lambda \mapsto C^{(\lambda)}$ is a well-known result of functional composition.
+\end{proof}
+
+This theorem essentially allows one to approximate the actual resiliency function $h$ and the actual margin price impact $\psi$ with some simplified or numerical friendly versions in computations while keeping the solutions ``close to'' the exact optimum. We already know that resiliency function of time-homogeneous elasticity has solutions of the form of Type B strategies. It would be a good starting point to approximate the actual resiliency function with continuous piecewise time-homogeneous elastic resiliency in numerical computations. 
+
+In summary, this subsection studies the cost-minimizing problem with time-dependent resiliency from abstract properties, and establishes general existence and continuity under some extra assumptions. The key mathematical tools are Skorokhod M1 topology and theory of differential equations.
+
+
+\section{Introducing noises to order flows and/or resiliency}
+The original model and generalizations above are deterministic in nature, due to the deterministic response of the limit order book and a separation of the random price process using integration by parts. It is very interesting to add a truly stochastic component to the model and compare it to the deterministic counterpart. In such cases, we do expect the optimum to be a stochastic predictable trading strategy varying according to scenarios. For simplicity, let's first revert the assumptions back to the ones in the original paper, in which the resiliency $h:\mathbb{R}_+ \to \mathbb{R}_+$ is time-homogeneous, strictly increasing, locally Lipschitz, and vanishing at the origin.
+
+{\color{red}
+\subsection{Noisy resiliency}
+
+In the original model, the volume effect process is given by the ordinary differential/integral equation
+$$E_t = X_t - \int_0^t h(E_s) ds.$$
+Here we add a noise term to the volume effect, and the new dynamics becomes
+$$E_t = X_t - \int_0^t h(E_s) ds - \int_0^t \sigma(E_s) dB_s,$$
+where $B$ is a standard Brownian motion and $\sigma:\mathbb{R}_+ \to \mathbb{R}$ is Lipschitz and vanishes at zero, so that the process $E$ is well-defined and non-negative provided that $X$ is non-decreasing. The cost functional in terms of $X$ stays the same as before:
+$$C(X) := \E\left[\int_0^T \psi(E_t) d X^c_t + \sum_{0\le t\le T} \Phi(E_t) - \Phi(E_{t^-})\right].$$
+The investor would like to minimize $C(X)$ among all predictable cadlag incresasing functions $X$ with $X_{0^-}=0, X_{T}=\bar{X} > 0$. Recall that $\Phi$ is increasing and convex with $\Phi(0)=0$ while $\psi = D^-\Phi = \min\partial\Phi$ with $\psi(0)=0$, which is increasing and left-continuous (and hence lsc).
+
+\subsubsection{Dynamic programming and HJB equation}
+Dynamic programming or HJB is the most natural method to try first in stochastic control. We will derive the HJB for this case of time-homogeneous coefficients, assuming necessary regularities of functions whenever required.
+
+Since coefficients are time homogeneous, we let $t$ be the time remaining till the end of the period, $e$ be the starting position in the equilibrium limit order book (relative to the hypothetical best ask $A$ which is WLOG assumed zero), and $x$ be the remaining quantities of stocks to be purchased. Let $v:\mathbb{R}_+ \times \mathbb{R}_+ \times \mathbb{R}_+ \to [0,\infty]$ be the value function of the minimization problem:
+$$v(t,e,x) := \inf\left\{\E\left[\int_0^t \psi(E_s) d X^c_s + \sum_{0\le s\le t} \Phi(E_s) - \Phi(E_{s^-})\right] : E_{0^-}=e, X_{0^-}=0, X_t=x, X \textrm{ predictable cadlag increasing} \right\}.$$
+It is clear that $v(0,e,x)=0$ iff $x=0$ and $v(0,e,x)=+\infty$ iff $x>0$ as the boundary condition.
+
+By dynamic programming principle, the process $\left\{v(T-t,E_t,\bar{X}-X_t) + \int_0^t \psi(E_s) d X^c_s + \sum_{0\le s\le t} \Phi(E_s) - \Phi(E_{s^-})\right\}_{t\in[0,T]}$ is supposed to be a submartingale for any admissible strategy $X$ and a UI martingale for an optimal strategy $X^\ast$. By considering the jump part of a strategy, we have
+\begin{align*}
+& v(T-t,E_t,\bar{X}-X_t)+\Phi(E_t)-\Phi(E_{t^-}) \ge v((T-t)^+,E_{t^-},\bar{X}-X_{t^-}), \\
+& \textrm{(recall jumps are predictable and equality could be attained)} \\
+\Rightarrow & \inf_{a\ge 0}\{v(t,e+a,x-a)+\Phi(e+a)-\Phi(e)\} = v(t^+,e,x).
+\end{align*}
+By considering absolute continuous part of a strategy, we have
+\begin{align*}
+0 \le & -\partial_t v(T-t,E_t,\bar{X}-X_t) dt +\partial_e v(T-t,E_t,\bar{X}-X_t)(dX^c_t-h(E_t)dt) +\frac{1}{2}\partial^2_e v(T-t,E_t,\bar{X}-X_t) \sigma^2(E_t)dt \\
+& -\partial_x v(T-t,E_t,\bar{X}-X_t) dX^c_t + \psi(E_t) dX^c_t, \\
+& \textrm{(let } dX^c_t=a_t dt \textrm{ and recall equality could be attained)} \\
+0 = & -\partial_t v - h(e) \partial_e v + \frac{1}{2}\sigma^2(e) \partial^2_e v + \inf_{a\ge 0}\{a(\psi(e) +\partial_e v -\partial_x v)\} = -\partial_t v - h(e) \partial_e v + \frac{1}{2}\sigma^2(e) \partial^2_e v
+\end{align*}
+If we further assume that the function $a\mapsto v(t,e+a,x-a)+\Phi(e+a)$ is strictly convex with a unique critical point, then we have the following (classical) partial differential/difference equation
+$$\begin{cases}
+v(t^+,e,x)+\Phi(e) = \inf_{a\ge 0}\{v(t,e+a,x-a)+\Phi(e+a)\}, & \textrm{ if } \psi(e) +\partial_e v -\partial_x v <0 \textrm{ (jump region)}, \\
+\partial_t v + h(e)\partial_e v - \frac{1}{2}\sigma^2(e) \partial^2_e v = 0, & \textrm{ if } \psi(e) +\partial_e v -\partial_x v \ge 0 \textrm{ (continuation region)}, \\
+v(0,e,x)=\begin{cases} 0, & \textrm{ if } x=0 \\ +\infty, & \textrm{ if } x>0 \end{cases}, & \textrm{boundary condition}.
+\end{cases}$$
+Unlike other HJB equations however, we still do not have a feedback form control directly even if we have a solution, since the minimization in the differential equation from the absolute continuous control is linear and if $\psi(e)+\partial_e v-\partial_x v=0$, then any $a\ge 0$ is a possible continuous trading rate (or even singularly continuous) that achieves the minimum zero. We also remark that the equation shares some similarities with Black-Scholes equations for American securities, in that both PDEs are linear parabolic (with homogeneous forcing) in the continuation region with a so-called free-boundary to be solved simultaneously. Their only difference lies in the free-boundary condition. For this reason, we don't expect to solve the equation above analytically even in the simplest form (though it is said that the value function of a finite-maturity American put option can be analytically expressed an infinite series using Homotopy Analysis Method). We are more interested in the abstract properties of PDEs from a modern perspective. In particular, we would like to establish a notion of solution useful for the so-called verification lemma and permitting well-posedness (possibly without continuity with respect to data) under some mild conditions. It would be better if there is some robustness condition and a numerical scheme could be developed. (Note that a naive viscosity solution does not work as it is automatically continuous whereas the equation above has jumps.)
+
+We make two observations before considering a concrete example in which we could compute the value function using the result in the original paper. First, at $t=0$, there must be a jump when $x>0$ due to the discrete minimization in the difference equation. It is obvious that the optimal jump size is $a^\ast=x>0$ and $v(0^+,e,x)=\Phi(e+x)-\Phi(e)$. We could consider it as the effective boundary condition. Note that $\psi(e)+\partial_e v(0^+,e,x)-\partial_x v(0^+,e,x)=0, \forall e,x\in \mathbb{R}_+$. Second, if $\sigma\equiv 0$, then the model reduces to the original one, of which we know the solution even for irregular coefficients, at least for $v(t,0,x)$. This could be used as a sanity check. The only undesired point of this special case is that a first-order transport equation does not possess smoothing effect or maximum principle as its second-order counterpart Fokker-Planck equation does.
+
+In the following, we consider the deterministic model mentioned above for sanity check. For simplicity, we consider a linear impact (the limit order book is linear so marginal price is linear and hence average price) linear resiliency model and solve for $v(t,e,x)$:
+$$\sigma\equiv 0, h(x)=\frac{1}{2}x, \Phi(x)=\frac{1}{2}x^2 \Leftrightarrow \psi(x)=x.$$
+By the original paper, the cost functional in terms of state, the volume effect process $E$, is
+\begin{align*}
+C(X) &= \Phi(E_t)-\Phi(E_{0^-})+\int_0^t \psi(E_s) h(E_s) ds = \frac{1}{2}E^2_t - \frac{1}{2}e^2 + \int_0^t \frac{1}{2} E^2_s ds \\
+&\ge \frac{1}{2}E^2_t - \frac{1}{2}e^2 + \frac{t}{2}\left(\frac{2}{t}\int_0^t \frac{1}{2}E_s ds\right)^2 = \frac{1}{2}E^2_t - \frac{1}{2}e^2 + \frac{2}{t}(x+e-E_t)^2, \\
+\textrm{(Recall } & E_t=e+X_t-\int_0^t h(E_s)ds = e+x-\int_0^t \frac{1}{2}E_s ds \textrm{)}
+\end{align*}
+where equality is attained iff $e\le E_{0^+}=E_s=\frac{2}{t}(x+e-E_t)=E_{t^-}\le E_t,\forall s\in(0,t)$, implemented by a Type A strategy as termed in the original paper. Solving for the constraint, we obtain
+$$\frac{2x+2e}{2+t} \le E_t \le \frac{2x+2e-te}{2}, x\ge \frac{t}{2}e.$$
+If $x< \frac{t}{2}e = t h(e)$, then trading against the resiliency will acquire more stocks than needed, and in such case, the equality can never be obtained. In this case, the investor will have to wait a while for the book to refill itself then trade against only incoming liquidity till the end, with a possible jump at terminal time. We study this case later since the volume effect process decay exponentially if there is no incoming market buys and one is forced to solve a transcendental equation.
+
+If $x\ge \frac{t}{2}e$, we look for the minimum of $E_t \mapsto \frac{1}{2}E^2_t - \frac{1}{2}e^2 + \frac{2}{t}(x+e-E_t)^2$ for $E_t \in \left[\frac{2x+2e}{2+t}, \frac{2x+2e-te}{2}\right]$. The function is a convex quadratic and hence admits a unique minimum. The critical point is given by the equation $E_t - \frac{4}{t}(x+e-E_t)=0 \Rightarrow E_t=\frac{4(x+e)}{4+t}$, which falls in the admissible interval if $x\ge \frac{2+t}{2}e$. In such case, the optimal $E_0=\frac{2(e+x)}{4+t}$ and $v(t,e,x)=\frac{2}{4+t}(e+x)^2 - \frac{1}{2}e^2$. If $\frac{t}{2}e \le x < \frac{2+t}{2}e$, then the critical point is to the right of the admissible interval and hence the minimum is attained at the right end point. The optimal $E_0=e=E_{0^-}$ and $E_t=x+e-\frac{t}{2}e$ with the corresponding cost $v(t,e,x)=\frac{1}{2}\left(x^2+(2-t)xe+\frac{t^2}{4}e^2\right)$. (However, I don't think this is right for this case and it indeed violates the HJB, but I can't immediate see why.) We briefly summarize the above result for the case $t>0$ and $x\ge \frac{t}{2}e$:
+$$v(t,e,x)=
+\begin{cases}
+\frac{2}{4+t}(e+x)^2 - \frac{1}{2}e^2, & x\ge\frac{2+t}{2}e \\
+\frac{1}{2}\left(x^2+(2-t)xe+\frac{t^2}{4}e^2\right), & \frac{t}{2}e \le x < \frac{2+t}{2}e
+\end{cases}$$
+
+Even though the case $x\ge \frac{t}{2}e$ is not a complete solution to the value function, there is enough interesting information to check its compatibility with the HJB equation. It is clear that $v(0^+,e,x)=\Phi(e+x)-\Phi(e)$, which agrees with the effective boundary condition. Compute the partial derivatives:
+\begin{align*}
+\partial_t v(t,e,x) &=
+\begin{cases}
+-\frac{2}{(4+t)^2}(e+x)^2, & x>\frac{2+t}{2}e \\
+\frac{t}{4}e^2-\frac{1}{2}xe, & \frac{t}{2}e < x < \frac{2+t}{2}e
+\end{cases}, \quad
+& \partial_t v \left(t,e,\frac{2+t}{2}e^+\right) = -\frac{1}{2}e^2 = \partial_t v \left(t,e,\frac{2+t}{2}e^-\right); \\
+\partial_e v(t,e,x) &=
+\begin{cases}
+\frac{4}{4+t}(e+x)-e, & x>\frac{2+t}{2}e \\
+\frac{2-t}{2}x+\frac{t^2}{4}e, & \frac{t}{2}e < x < \frac{2+t}{2}e
+\end{cases}, \quad
+& \partial_e v \left(t,e,\frac{2+t}{2}e^+\right) = e = \partial_e v \left(t,e,\frac{2+t}{2}e^-\right); \\
+\partial_x v(t,e,x) &=
+\begin{cases}
+\frac{4}{4+t}(e+x), & x>\frac{2+t}{2}e \\
+x+\frac{2-t}{2}e, & \frac{t}{2}e < x < \frac{2+t}{2}e
+\end{cases}, \quad
+& \partial_x v \left(t,e,\frac{2+t}{2}e^+\right) = 2e = \partial_x v \left(t,e,\frac{2+t}{2}e^-\right).
+\end{align*}
+So $v\in C^1$ in this range. We then compute the following two expressions:
+\begin{align*}
+\psi(e) +\partial_e v(e,t,x) -\partial_t v(e,t,x) &=
+\begin{cases}
+0, & x>\frac{2+t}{2}e \\
+\frac{t}{2}\left(\frac{2+t}{2}e-x\right)>0, & \frac{t}{2}e < x < \frac{2+t}{2}e
+\end{cases}; \\
+\partial_t v(t,e,x) + h(e)\partial_e v(t,e,x) &=
+\begin{cases}
+\frac{2}{(4+t)^2}((3+t)e^2+(2+t)ex-x^2)-\frac{1}{2}e^2 <0, & x>\frac{2+t}{2}e \\
+\frac{t}{4}e\left(\frac{2+t}{2}e-x\right) >0, & \frac{t}{2}e < x < \frac{2+t}{2}e
+\end{cases}.
+\end{align*}
+These inequalities show that whenever $x\ge \frac{2+t}{2}e$, one can place a discrete order as he wishes without changing the future costs as long as it stays within this range. In particular, one can submit a market buy order so that $x=\frac{2+t}{2}e$. Along this critical curve, $\partial_t v + h(e)\partial_e v =0$ and $\psi(e)+\partial_e v -\partial_x v=0$. Also, when $x>\frac{2+t}{2}e$ it is suboptimal not to trade at all since $-\partial_t v -h(e)\partial_e v >0$. Note that staying along the critical curve $x=\frac{2+t}{2}e$ is consistent with the optimal strategy used in the original model (and hence the derivation above). In contrast, when $\frac{t}{2}e<x<\frac{2+t}{2}e$, one should not trade at all and it is better off waiting for $e$ and $t$ to drop until $x=\frac{2+t}{2}e$. This is however in contradiction to the ``claimed optimality'' of the Type A strategy above.
+
+Back to the value function (independent of HJB) above, we conjecture that whenever $x<\frac{2+t}{2}e$, i.e. there are fewer stocks to be purchased that make the unique critical point of the quadratic fall in the admissible interval, the optimal strategy is of the form not trading for a while until time $s\in[0,t]$, and then following a Type A strategy without the initial jump but with a possible terminal jump. So we have the following equations setup for such a strategy:
+\begin{align*}
+E_s = e\exp\left(-\frac{1}{2}s\right), \frac{1}{2}E_s(t-s) + \Delta E_t = x.
+\end{align*}
+The cost of this strategy is then
+\begin{align*}
+C(X) = \Phi\left(E_s+x-\frac{1}{2}E_s(t-s)\right) - \Phi(E_s) + (t-s)\frac{1}{2}E^2_s = \frac{1}{2}\left(x-\frac{1}{2}E_s(t-s-2)\right)^2 + (t-s-1)\frac{1}{2}E^2_s.
+\end{align*}
+Minimizing $C(X)$ with respect to $s$ requires solving a transcendental equation. We write down the derivative and claim that it is consistent with our claim of optimality.
+\begin{align*}
+\frac{dC}{ds} = \left(x-\frac{1}{2}E_s(t-s-2)\right)\frac{1}{4}E_s(t-s) - \frac{1}{2}E^2_s(t-s) = \frac{1}{4}E_s (t-s) \left(x-\frac{t-s+2}{2}E_s\right).
+\end{align*}
+It is easy to check that $\frac{dC}{ds}\big|_{s=0} < 0$ if $x<\frac{2+t}{2}e$, which says that following a Type A strategy from the very beginning is suboptimal. However, we are unable to solve the value function explicitly in this case.
+
+
+\subsection{Noise purchasers}
+}
+
+
+
+% references
+\bibliographystyle{plainnat}
+\phantomsection
+\addcontentsline{toc}{section}{\refname}
+\bibliography{References}
+
+\end{document}
