@@ -1,0 +1,175 @@
+\documentclass[openany,oneside]{article}
+\usepackage{fullpage}
+\usepackage{amsmath,amsthm,amssymb,mathtools,tikz,epsfig,enumerate}
+\usepackage{hyperref,titling,titlesec,pdfpages,setspace,fancyhdr,multicol,appendix}
+\usepackage[numbers]{natbib}
+
+% formatting
+\setlength{\parskip}{2ex}
+\setlength{\parindent}{0pt}
+
+% statement environment
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+ 
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{prob}[thm]{Problem}
+\newtheorem{eg}[thm]{Example}
+ 
+\theoremstyle{remark}
+\newtheorem{rem}[thm]{Remark}
+
+% shorthand notations
+\newcommand{\E}{\mathbb{E}} % expectation
+\renewcommand{\P}{\mathbb{P}} % probability
+\newcommand{\I}{\mathbb{I}} % indicator
+\newcommand{\F}{\mathcal{F}} % filtration
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert} % absolute value, or cardinality
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert} % norm
+
+
+% info
+\title{Rmk_SignalOptTrade}
+\date{Spring 2018}
+\hypersetup{bookmarksnumbered=true, 
+			bookmarksopen=true,
+            unicode=true,
+            pdftitle=\thetitle,
+            pdfauthor=Yangxi Ou,
+            pdfstartview=FitH,
+            pdfpagemode=UseOutlines}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{document}
+
+% title
+\begin{center}	
+	\textbf{\Large Remarks on Incorporating Signals into Optimal Trading by Lehalle and Neuman} \\*[5ex]
+    \thedate \\*[5ex]
+\end{center}
+
+
+% introduction
+\section{Introduction}
+Artificial price limits are sometimes enforced in the financial market due to regulatory powers, for example the exchange rate of Swiss Franc in Euro (EUR/CHF) is capped at a known threshold by the Swiss central bank. Such limits should be considered in acquiring or liquidating positions, in addition to price impacts, transaction costs and inventory risks. We study the optimal liquidation problem of an asset with one-sided price limit, following \cite{lehalle2017incorporating}.
+
+
+% model setup
+\section{Model setup}
+Fix a filtered probability space $(\Omega, \F, \{\F_t\}_{t\in[0,T]}, \P)$ satisfying the usual conditions. Let $P$, the asset price, be a semi-martingale in $\mathcal{S}^1:=\{S \textrm{ adapted c\'ad\'ag} : \E S^\ast_T = \E[\sup_{t\in[0,T]} \abs{S_t}] < \infty\}$. Denote the position in the asset at time $t$ by $X_t$, where the initial position is given as $X_0:=x$. The investor controls the liquidation intensity $-\dot{X} =: r \in \mathcal{V} := \{v \textrm{ progressively measurable} : \int_0^T \abs{v_t} dt < \infty \}$. Given the transaction cost coefficient $\kappa\in\mathbb{R}_{++}:=(0,\infty)$, the penalty coefficients for running and terminal inventory $\phi\in\mathbb{R}_{++}$ and $\rho\in\mathbb{R}_{++}$ respectively, the investor would like to maximize the inventory risk adjusted profit and loss of liquidation:
+\begin{align*}
+V^r:= \E\left[\int_0^T (P_t - \kappa r_t)r_t dt + P_T X_T - \int_0^T \phi X_t^2 dt - \rho X_T^2 \right]
+\end{align*}
+
+The setup is more general than that in \cite{lehalle2017incorporating}, which requires $(P,I)$ to be a diffusion where $I$ is the drift of $P$. In the case of a given price cap $c$ we are interested in, $P:=S-(M-c)_+$, where $S\in\mathcal{S}^1$ is a martingale and $M_t:=\sup_{u\in[0,t]} S_u$ is its running maximum. Note that $P_t\le c$ with equality iff $S_t=M_t\ge c$. Such formulation of the price cap reflects the reality of minimal regulatory intervention in the market. However, we will not impose this assumption in the next section in which we solve the general optimization problem.
+
+
+% solution
+\section{Solution to the general problem}
+In our more general setup, the dynamic programming and differential equation technique in \cite{lehalle2017incorporating} no longer applies. Here we use calculus of variations following \cite{bouchard2017equilibrium} to bypass the issue. It is immediate that the functional $r\mapsto V^r$ is quadratic (including linear and constant terms) with a strictly negative definite quadratic coefficient, and hence there exists a unique maximum characterized by the critical point $r^\ast$, i.e. $\frac{\delta V^r}{\delta r}(r^\ast) =0$, where $\frac{\delta V^r}{\delta r}$ is the G\^ateaux derivative. The most technical part of this approach is the system of forward backward stochastic differential equations (FBSDE) characterizing the optimal trading rate and portfolio holding, where the forward equation is given by the dynamics $-\dot{X}=r$ and the backward equation is given by the optimality condition $\frac{\delta V^r}{\delta r}=0$. Fortunately, the system is linear and can be solved explicitly. Once the optimal selling rate $r^\ast$ is known, the maximum value $V^\ast$ is then directly computed by definition. The main result is stated as follows.
+
+\begin{prop}[Formulae of optimal strategy and value function]\label{main}
+
+Define the stochastic processes $t\mapsto V^r_t$ and $t\mapsto V^\ast_t$ as $\forall t\in[0,T]$,
+\begin{align*}
+& V^r_t := \E_t \left[\int_t^T (P_s-\kappa r_s)r_s ds + P_T X_T -\int_t^T \phi X_s^2 ds - \rho X_T^2 \right],\\
+& V^\ast_t := \sup_{r\in\mathcal{V}} V^r_t.
+\end{align*}
+where $\E_t[\cdot]:=\E[\cdot \vert \F_t]$. Then the unique maximizer $r^\ast$ of $r\mapsto V^r$ and the maximum $V^\ast_t$ are given by the following:
+\begin{align*}
+& r^\ast_t = -v_2(t) X_t - v_1(t), \\
+& V^\ast_t = -P_t X_t + \kappa\left[v_0(t) + 2 v_1(t) X_t + v_2(t) X_t^2\right],
+\end{align*}
+where
+\begin{align*}
+& v_2(t):= -(\log G)'(T-t) = -\frac{G'(T-t)}{G(T-t)}, \textrm{ with } G(t):=\beta\cosh(\beta t)+\kappa^{-1}\rho\sinh(\beta t) \textrm{ and } \beta:=\sqrt{\kappa^{-1}\phi}\\
+& v_1(t):= \frac{1}{2\kappa}\int_t^T \frac{G(T-s)}{G(T-t)} d_s(\E_t P_s) = \frac{1}{2\kappa}\int_t^T \exp\left(\int_t^s v_2\right) d_s(\E_t P_s), \\
+& v_0(t):= \int_t^T \E_t[v_1^2(s)] ds.
+\end{align*}
+\end{prop}
+
+\begin{rem}
+Our definition of $V^\ast_t$ and $v_i(t)$ are different from those in \cite{lehalle2017incorporating} (even with their model assumptions). The modification reflects our FBSDE approach. In particular, $G$ plays the role of ``the fundamental solution'' of a linear differential equation, and the expression of $r^\ast$ in terms of $G$ comes from Duhamel's principle. Of course, both $r^\ast$ do coincide (or we are violating uniqueness of optimal strategy).
+\end{rem}
+
+Note that $s\mapsto \E_t P_s$ is of finite variations and hence the integral in the of definition of $v_1(t)$ makes sense. In the setup of \cite{lehalle2017incorporating}, $d_s(\E_t P_s) = (E_t I_s)ds$ by Fubini's theorem. In the case of a general semi-martingale asset price, our result simply confirms that the investor only needs to do the same thing as before to achieve the optimum: forecasting price trends till the end of the trading period.
+
+
+% with price cap
+\section{Optimal strategy in the case of a price cap}
+We are mostly interested in the optimal strategy, and especially how it changes under the presence of a price cap. From the main result, we shall compute $\E_t P_s, \forall s\in[t,T]$, with the extra assumption that $P=S-(M-c)_+$ for some $c\in\mathbb{R}$, $S\in\mathcal{S}^1$ a martingale and $M_t:=\sup_{u\in[0,t]}S_u$:
+\begin{align*}
+& \E_t P_s = \E_t[S_s-(M_s-c)_+] = S_t-\E_t(M_s-c)_+ = S_t-(M_t-c)_+ - \E_t\left[(M_s-c)_+ - (M_t-c)_+\right] \\
+=& P_t -\left\{ \E_t\left[(M_s-c)_+; M_t\le c\right] + \E_t\left[(M_s-c)-(M_t-c); M_t > c\right] \right\} \\
+=& P_t -\left\{ \E_t\left[(M_s-c)_+; M_t\le c\right] + \E_t\left[(M_s-M_t)_+; M_t > c\right] \right\} = P_t - \E_t\left[(M_s-c\vee M_t)_+\right].
+\end{align*}
+Note that $d_s(\E_t P_s) = -d_s\left[\E_t(M_s-c\vee M_t)_+\right] = -d_s L_s(t)$, where $L_s(t):=\E_t(M_s-c\vee M_t)_+$ is the price at time $t$ of a lookback call option on $S$ maturing at time $s$ with the fixed strike $c\vee M_t$. We thus have reduced the problem of optimal trading with a price cap to option pricing.
+
+\begin{rem}
+Indeed, all we need is just the Greek theta of the lookback call (if $S$ is a time-homogeneous Markov process). Intuitively, one expects that the Greek is larger when the option is further out of the money or matures later, otherwise equal. In view of the formula for $r^\ast$, this implies that the investor would sell less aggressively than in the martingale price case at the earlier stage or lower away from the cap, which coincides with the common sense to fully exploit the price cap.
+\end{rem}
+
+We devote the following to the computation of $L_s(t)$. One way is to remove the dependency on the running maximum $M$ as follows:
+\begin{align*}
+& L_s(t) = \E_t(M_s-c\vee M_t)_+ = \E_t \int_{c\vee M_t}^{\infty}\I_{(-\infty,M_s)}(y) dy = \int_{c\vee M_t} \E_t \I_{(-\infty,M_s)}(y)dy = \int_{c\vee M_t} \P_t(M_s > y) dy \\
+=& \int_{c\vee M_t} \P_t(\tau_t(y) \le s) dy,
+\end{align*}
+where $\tau_t(y):=\inf\{s\in[t,\infty] : S_s> y\}$ is the first hitting time of the set $(y,\infty)$ after time $t$ with respect to $S$. Note that the identity $\P_t(M_s > y) = \P_t(\tau_t(y)\le s)$ is true here since $y\ge M_t\ge S_t$; otherwise it could be false as the first hitting time $\tau_t(y)$ after time $t$ does not encode the information of historical maximum.
+
+In some special cases, we can compute the first hitting time explicitly and thus give an explicit formula for the optimal trading strategy in feedback form. The most obvious example is $S$ being a Brownian motion. The more general case of $S$ being a diffusion can also be expressed in terms of solution to a linear heat equation.
+
+Suppose that $S:=B$ where $B$ is a standard one-dimensional Brownian motion. Then by the reflection principle, $\forall s\in[t,T], y\ge M_t$,
+\begin{align*}
+& \P_t(\tau_t(y)\le s) = \P^{t,B_t}(\tau_t(y)\le s) = \P^{t,B_t}(\tau_t(y)\le s, B_s\ge B_{\tau_t(y)}) + \P^{t,B_t}(\tau_t(y)\le s, B_s > B_{\tau_t(y)}) \\
+=& 2\P^{t,B_t}(\tau_t(y)\le s, B_s\ge B_{\tau_t(y)}) = 2\P^{t,B_t}(B_s>y).
+\end{align*}
+Therefore, $L_s(t)=\int_{c\vee M_t}2\P^{t,B_t}(B_s > y) dy=2\E^{t,B_t}(B_s-c\vee M_t)_+ = 2u(s-t,B_t; c\vee M_t)$, where $u(\theta,x;K):=\E^{0,x}(B_\theta-K)_+$ is the price of a vanilla European call under the Bachelier model. We take advantage of the partial differential equation (PDE) characterization of the option price:
+\begin{align*}
+u(\theta,x;K) = \left[(\cdot-K)_+ \ast p(\theta,\cdot)\right](x) \iff
+\begin{cases}
+\partial_\theta u - \frac{1}{2}\partial^2_x u =0, & \theta\in\mathbb{R}_{++}, x,K\in\mathbb{R} \\
+u(0,x;K)=(x-K)_+, & x,K\in\mathbb{R} \\
+\abs{u(\theta,x;K)} \le C\sqrt{\theta}(1+\abs{x}+\abs{K}), & \theta\in\mathbb{R}_+, x,K\in\mathbb{R}
+\end{cases},
+\end{align*}
+where $p(\theta,x):=(2\pi\theta)^{-1/2}\exp\left(-\frac{x^2}{2\theta}\right)$ is the transitional probability density kernel of the standard Brownian motion (or the fundamental solution of the heat equation). Thus,
+\begin{align*}
+& d_s L_s(t) = 2\partial_\theta u(s-t,B_t;c\vee M_t) ds = \partial^2_x u(s-t,B_t;c\vee M_t) ds = \left\{\left[\partial^2_x (\cdot-c\vee M_t)_+\right]\ast p(s-t,\cdot)\right\}(B_t) ds \\
+=& \left\{\delta(\cdot-c\vee M_t) \ast p(s-t,\cdot)\right\}(B_t) ds = p(s-t,B_t-c\vee M_t)ds = p(s-t,B_t-(c\vee M_t-c)-c) ds \\
+=& p(s-t, S_t-(M_t-c)_+ -c) ds = p(s-t,P_t-c)ds = p(s-t,c-P_t)ds,
+\end{align*}
+and the optimal selling rate is $r^\ast_t = -\frac{1}{2\kappa G(T-t)}\left(-2\kappa G'(T-t) X_t + \int_t^T G(T-s)p(s-t,c-P_t)ds\right)$.
+
+If $S$ is a diffusion given by the stochastic differential equation (SDE) $dS_t = \sigma(t,S_t) dB_t$, where $\sigma$ is uniformly Lipschitz in space and $B$ is a standard Brownian motion (note that $S$ is a martingale), then the cumulative distribution function (CDF) of the first hitting time $\P^{t,x}(\tau_t(y)\le s)=:u(t,x;s,y)$ can be characterized as the bounded solution to the following linear heat equation:
+\begin{align*}
+\begin{cases}
+(\partial_t + \mathcal{L}^S)u = \partial_t u + \frac{1}{2}\sigma^2\partial^2_x u = 0, & t<s, x<y \\
+u(t,y;s,y)=1, & t<s \\
+u(s,x;s,y)=\I_{\{x=y\}}, & x<y
+\end{cases}.
+\end{align*}
+Then we can write $L_s(t) = \int_{c\vee M_t} u(t,B_t;s,y) dy$.
+
+Now that one has to solve a PDE for diffusive $S$, we can also directly obtain a PDE for $L_s(t)$. Set $u(t,x,y;s,K):=\E\left[(M_s-K)_+ \vert S_t=x, M_t=y\right]$, then $u$ solves the following linear heat equation:
+\begin{align*}
+\begin{cases}
+(\partial_t u + \mathcal{L}^S)u = \partial_t u + \frac{1}{2}\sigma^2\partial^2_x u = 0, & t<s, x<y \\
+\partial_y u(t,y,y;s,K) = 0, & t<s \\
+u(s,x,y;s,K) = (y-K)_+, & x<y
+\end{cases}
+\end{align*}
+Then we can write $L_s(t) = u(t,B_t,M_t;s,c\vee M_t)$.
+
+
+% references
+\bibliographystyle{plainnat}
+\phantomsection
+\addcontentsline{toc}{section}{\refname}
+\bibliography{References}
+
+\end{document}
