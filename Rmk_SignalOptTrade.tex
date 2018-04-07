@@ -29,11 +29,7 @@
 \newcommand{\F}{\mathcal{F}} % filtration
 \DeclarePairedDelimiter{\abs}{\lvert}{\rvert} % absolute value, or cardinality
 \DeclarePairedDelimiter{\norm}{\lVert}{\rVert} % norm
-\newcommand{\ts}{\textstyle}
-\DeclareMathOperator{\esssup}{ess\, sup}
-\newcommand*{\remaend}{\hfill\text{$\diamond$}}
-\newcommand{\close}{\hspace*{\fill}$\diamond$}
-\newcommand{\closeEqn}{\tag*{$\diamond$}}
+
 
 % info
 \title{Rmk_SignalOptTrade}
@@ -60,297 +56,246 @@
 
 % introduction
 \section{Introduction}
-Artificial price limits are sometimes enforced in the financial market due to regulatory powers, for example the exchange rate of Swiss Franc in Euro (EUR/CHF) is capped at a known threshold by the Swiss central bank. Such limits should be considered in acquiring or liquidating positions, in addition to price impact, transaction costs and inventory risk. We study the optimal liquidation problem of an asset with one-sided price limit, following \cite{lehalle2017incorporating}.
+Artificial price limits are sometimes enforced in the financial market due to regulatory powers, for example the exchange rate of Swiss Franc in Euro (EUR/CHF) is capped at a known threshold by the Swiss central bank. Such limits should be considered in acquiring or liquidating positions, in addition to price impacts, transaction costs and inventory risks. We study the optimal liquidation problem of an asset with one-sided price limit, following \cite{lehalle2017incorporating}.
 
 
 % model setup
 \section{Model setup}
-Fix a filtered probability space $(\Omega, \F, \{\F_t\}_{t\in[0,T]}, \P)$ satisfying the usual conditions. Let $P$, the asset price, be a semi-martingale in
+Fix a filtered probability space $(\Omega, \F, \{\F_t\}_{t\in[0,T]}, \P)$ satisfying the usual conditions. Let $P$, the asset price, be a semi-martingale in $\mathcal{S}^1:=\{S \textrm{ adapted c\'ad\'ag} : \E S^\ast_T = \E[\sup_{t\in[0,T]} \abs{S_t}] < \infty\}$. Denote the position in the asset at time $t$ by $X_t$, where the initial position is given as $X_0:=x$. The investor controls the liquidation intensity $-\dot{X} =: r \in \mathcal{V} := \{v \textrm{ progressively measurable} : \int_0^T \abs{v_t} dt < \infty \}$. Given the transaction cost coefficient $\kappa\in\mathbb{R}_{++}:=(0,\infty)$, the penalty coefficients for running and terminal inventory $\phi\in\mathbb{R}_{++}$ and $\rho\in\mathbb{R}_{++}$ respectively, the investor would like to maximize the inventory risk adjusted profit and loss of liquidation:
 \begin{align*}
-\mathcal{H}^1:=\{ & S \textrm{ adapted c\'adl\'ag} : S=M+A \textrm{ is the canonical decomposition, } \\
-& \textrm{ where $M$ is the (local) martingale component and $A$ is the predictable component, and } \\
-& \E\left[\langle M\rangle^{1/2}_T\right] + \E\left[\int_0^T \abs{d A_t}\right] < \infty\}.
+V^r:= \E\left[\int_0^T (P_t - \kappa r_t)r_t dt + P_T X_T - \int_0^T \phi X_t^2 dt - \rho X_T^2 \right]
 \end{align*}
-%$\mathcal{H}^1:=\{S \textrm{ adapted c\'adl\'ag} : \E S^\ast_T = \E[\sup_{t\in[0,T]} \abs{S_t}] < \infty\}$.
-Denote the position in the asset at time $t$ by $X_t$, where the initial position is given as $X_0:=x$. The investor controls the liquidation intensity $-\dot{X} =: r \in \mathcal{V} := \{v \textrm{ progressively measurable} : \int_0^T \abs{v_t} dt < \infty \}$. Given the transaction cost coefficient $\kappa\in\mathbb{R}_{++}:=(0,\infty)$, the penalty coefficients for running and terminal inventory $\phi\in\mathbb{R}_{++}$ and $\rho\in\mathbb{R}_{++}$, respectively, the investor aims to maximize the inventory risk adjusted profit and loss of liquidation:
-\[
-\ts V^r:= \E\left[\int_0^T (P_t - \kappa r_t)r_t dt + P_T X_T - \int_0^T \phi X_t^2 dt - \rho X_T^2 \right].
-\]
-This setup is more general than in \cite{lehalle2017incorporating}, which requires $(P,I)$ to be a diffusion, where $I$ is the drift of $P$. We are mainly interested in the case in which $P$ has a given price cap $c$, i.e.\ $P:=S-(M-c)_+$, where $S\in\mathcal{H}^1$ is a martingale and $M_t:=\sup_{u\in[0,t]} S_u$ is its running maximum. Note that $P_t\le c$ with equality iff $S_t=M_t\ge c$. Such formulation of the price cap reflects the reality of minimal regulatory intervention in the market.
-%However, we will not impose this assumption in the next section in which we solve the general optimization problem.
+
+The setup is more general than that in \cite{lehalle2017incorporating}, which requires $(P,I)$ to be a diffusion where $I$ is the drift of $P$. In the case of a given price cap $c$ we are interested in, $P:=S-(M-c)_+$, where $S\in\mathcal{S}^1$ is a martingale and $M_t:=\sup_{u\in[0,t]} S_u$ is its running maximum. Note that $P_t\le c$ with equality iff $S_t=M_t\ge c$. Such formulation of the price cap reflects the reality of minimal regulatory intervention in the market. However, we will not impose this assumption in the next section in which we solve the general optimization problem.
 
 
 % solution
 \section{Solution to the general problem}
-In our setup, the dynamic programming and differential equation technique in \cite{lehalle2017incorporating} no longer applies, which is why we follow a calculus of variation approach similar to \cite{bouchard2017equilibrium}. It is immediate that the functional $r\mapsto V^r$ is quadratic (including linear and constant terms) with a strictly negative definite quadratic coefficient, and hence there exists a unique maximum characterized by the critical point $r^\ast$, i.e. $\frac{\delta V^r}{\delta r}(r^\ast) =0$, where $\frac{\delta V^r}{\delta r}$ is the G\^ateaux derivative. Our approach leads to a system of forward backward stochastic differential equations (FBSDE) characterizing the optimal trading rate and portfolio holding, where the forward equation is given by the dynamics $-\dot{X}=r$ and the backward equation is given by the optimality condition $\frac{\delta V^r}{\delta r}=0$. Fortunately, the system is linear and can be solved explicitly. Once the optimal selling rate $r^\ast$ is known, the maximum value $V^\ast$ is then directly computed by definition. The main result is stated as follows.
+In our more general setup, the dynamic programming and differential equation technique in \cite{lehalle2017incorporating} no longer applies. Here we use calculus of variations following \cite{bouchard2017equilibrium} to bypass the issue. It is immediate that the functional $r\mapsto V^r$ is quadratic (including linear and constant terms) with a strictly negative definite quadratic coefficient, and hence there exists a unique maximum characterized by the critical point $r^\ast$, i.e. $\frac{\delta V^r}{\delta r}(r^\ast) =0$, where $\frac{\delta V^r}{\delta r}$ is the G\^ateaux derivative. The most technical part of this approach is the system of forward backward stochastic differential equations (FBSDE) characterizing the optimal trading rate and portfolio holding, where the forward equation is given by the dynamics $-\dot{X}=r$ and the backward equation is given by the optimality condition $\frac{\delta V^r}{\delta r}=0$. Fortunately, the system is linear and can be solved explicitly. Once the optimal selling rate $r^\ast$ is known, the maximum value $V^\ast$ is then directly computed by definition. The main result is stated as follows.
 
-\begin{prop}[Formulae for optimal strategy and value function]\label{main}
+\begin{prop}[Formulae of optimal strategy and value function]\label{main}
+
 Define the stochastic processes $t\mapsto V^r_t$ and $t\mapsto V^\ast_t$ as $\forall t\in[0,T]$,
-\[
-\ts V^r_t := \E_t \left[\int_t^T (P_s-\kappa r_s)r_s ds + P_T X_T -\int_t^T \phi X_s^2 ds - \rho X_T^2 \right], \qquad V^\ast_t := \esssup_{r\in\mathcal{V}} V^r_t,
-\]
-where $\E_t:=\E[\cdot \vert \F_t]$. Then the unique maximizer $r^\ast$ of $r\mapsto V^r$ and the maximum $V^\ast_t$ are given by
 \begin{align*}
-&\ts r^\ast_t = -v_2(t) X_t^{\ast} - v_1(t), \textrm{ or equivalently } X^{\ast}_t = \frac{G(T-t)}{G(T)}x + \int_0^t \frac{G(T-t)}{G(T-s)} v_1(s) ds, \\
-&\ts V^\ast_t = P_t X_t^{\ast} + \kappa\left[v_0(t) + 2 v_1(t) X_t^{\ast} + v_2(t) (X_t^{\ast})^2\right],
+& V^r_t := \E_t \left[\int_t^T (P_s-\kappa r_s)r_s ds + P_T X_T -\int_t^T \phi X_s^2 ds - \rho X_T^2 \right],\\
+& V^\ast_t := \sup_{r\in\mathcal{V}} V^r_t.
 \end{align*}
-where $X_t^{\ast} := X_t^{r^\ast}$ and, with $\beta:=\sqrt{\kappa^{-1}\phi}$,
+where $\E_t[\cdot]:=\E[\cdot \vert \F_t]$. Then the unique maximizer $r^\ast$ of $r\mapsto V^r$ and the maximum $V^\ast_t$ are given by the following:
 \begin{align*}
-&\ts G(t)  := \beta\cosh(\beta t)+\kappa^{-1}\rho\sinh(\beta t),\\
-&\ts v_2(t):= -(\log G)'(T-t) = -\frac{G'(T-t)}{G(T-t)},\\
-&\ts v_1(t):= \frac{1}{2\kappa}\int_t^T \frac{G(T-s)}{G(T-t)} d_s(\E_t P_s) = \frac{1}{2\kappa}\int_t^T \exp\left(\int_t^s v_2\right) d_s(\E_t P_s), \\
-&\ts v_0(t):= \int_t^T \E_t[v_1^2(s)] ds.\closeEqn
+& r^\ast_t = -v_2(t) X_t - v_1(t), \textrm{ or equivalently } X^\ast_t = \frac{G(T-t)}{G(T)}x + \int_0^t \frac{G(T-t)}{G(T-s)} v_1(s) ds, \\
+& V^\ast_t = P_t X_t + \kappa\left[v_0(t) + 2 v_1(t) X_t + v_2(t) X_t^2\right],
+\end{align*}
+where
+\begin{align*}
+& v_2(t):= -(\log G)'(T-t) = -\frac{G'(T-t)}{G(T-t)}, \textrm{ with } G(t):=\beta\cosh(\beta t)+\kappa^{-1}\rho\sinh(\beta t) \textrm{ and } \beta:=\sqrt{\kappa^{-1}\phi}\\
+& v_1(t):= \frac{1}{2\kappa}\int_t^T \frac{G(T-s)}{G(T-t)} d_s(\E_t P_s) = \frac{1}{2\kappa}\int_t^T \exp\left(\int_t^s v_2\right) d_s(\E_t P_s), \\
+& v_0(t):= \int_t^T \E_t[v_1^2(s)] ds.
 \end{align*}
 \end{prop}
 
 \begin{rem}
-Note that $s\mapsto \E_t P_s$ is of finite variation and hence the integral in the of definition of $v_1(t)$ makes sense. Indeed, since $P\in \mathcal{H}^1$, it admits a unique Doob-Meyer decomposition $P=A+S$ in which $A\in\mathcal{H}^1$ is predictable and of finite variation and $S\in\mathcal{H}^1$ is a martingale. Thus by definition,
-\[
- \ts \sum_i \abs{\E_t P_{s_i} - \E_t P_{s_{i-1}}} \le \E_t\left[\sum_i \abs{A_{s_i} - A_{s_{i-1}}}\right] \le \E_t \int_t^T \abs{d A_s} < \infty.\closeEqn
-\]
+Note that $s\mapsto \E_t P_s$ is of finite variations and hence the integral in the of definition of $v_1(t)$ makes sense. Indeed, since $P\in \mathcal{S}^1$, i.e. $P^\ast_T \in L^1$, it admits a unique Doob-Meyer decomposition $P=A+S$ in which $A\in\mathcal{S}^1$ is predictable and of finite variation and $S\in\mathcal{S}^1$ is a martingale. Thus by definition, $$\sum_i \abs{\E_t P_{s_i} - \E_t P_{s_{i-1}}} \le \E_t\left[\sum_i \abs{A_{s_i} - A_{s_{i-1}}}\right] \le \E_t \int_t^T \abs{d A_s} < \infty.$$
 \end{rem}
 
 \begin{proof}
-We follow \cite{bouchard2017equilibrium} for the proof. For convenience, we only maximize $V^r_0$ instead of every time $t\in[0,T]$. Recall that $X_t = x-\int_0^t r_s ds$, so $X$ is an affine function of $r$. It is straightforward that $V^r_0$ is a quadratic functional (with linear and constant terms) of $(r,X)$ with strictly negative definite quadratic coefficients, and hence it admits a unique maximizer characterized by the critical point. We will solve for the critical point in feedback form directly.
+We follow \cite{bouchard2017equilibrium} for the proof. For convenience, we only maximize $V^r_0$ instead of every time $t\in[0,T]$.
 
-Step 1: Compute the G\^ateaux derivative. We fix a direction of variation $\alpha \in \mathcal{V}$ and compute
+Recall that $X_t = x-\int_0^t r_s ds$, so $X$ is an affine function of $r$. It is straightforward that $V^r_0$ is a quadratic functional (with linear and constant terms) of $(r,X)$ with strictly negative definite quadratic coefficients, and hence it admits a unique maximizer characterized by the critical point. We will solve for the critical point in feedback form directly.
+
+\begin{enumerate}[Step 1.]
+\item Compute G\^ateaux derivative
+
+Fix a direction of variation $\alpha \in \mathcal{V}$, we compute
 \begin{align*}
-\ts\left\langle \frac{\delta V^r_0}{\delta r}, \alpha \right\rangle &\ts= \frac{d}{d\epsilon}\Big\vert_{\epsilon=0} V^{r+\epsilon\alpha}_0  \\
-&\ts= \E\left[\int_0^T P_t \alpha_t dt - 2\kappa\int_0^T r_t \alpha_t dt - P_T \int_0^T \alpha_t dt + 2\phi\int_0^T X_t \int_0^t \alpha_s ds dt + 2\rho X_T \int_0^T \alpha_t dt \right] \\
-&\ts= \E\int_0^T \alpha_t \E_t\left[P_t - 2\kappa r_t - P_T + 2\phi\int_t^T X_s ds + 2\rho X_T \right] dt.
+& \left\langle \frac{\delta V^r_0}{\delta r}, \alpha \right\rangle = \frac{d}{d\epsilon}\Big\vert_{\epsilon=0} V^{r+\epsilon\alpha}_0  \\
+=& \E\left[\int_0^T P_t \alpha_t dt - 2\kappa\int_0^T r_t \alpha_t dt - P_T \int_0^T \alpha_t dt + 2\phi\int_0^T X_t \int_0^t \alpha_s ds dt + 2\rho X_T \int_0^T \alpha_t dt \right] \\
+=& \E\int_0^T \alpha_t \E_t\left[P_t - 2\kappa r_t - P_T + 2\phi\int_t^T X_s ds + 2\rho X_T \right] dt.
 \end{align*}
-Setting $\frac{\delta V^r_0}{\delta r}=0$, we obtain $\E_t[-2\kappa r_t + P_t - P_T + 2\phi\int_t^T X_s ds + 2\rho X_T ] = 0$. Combining this with the dynamics of $X$, we obtain the following linear system of forward backward stochastic differential equations (FBSDE):
-\[
+
+Set $\frac{\delta V^r_0}{\delta r}=0$, we get $\E_t\left[-2\kappa r_t + P_t - P_T + 2\phi\int_t^T X_s ds + 2\rho X_T \right] = 0$. Combining with the dynamics of $X$, we obtain the following linear system of forward backward stochastic differential equations (FBSDE):
+\begin{align*}
 \begin{cases}
 X_t &= x-\int_0^t r_s ds \\
 r_t &= \frac{1}{2\kappa}\E_t\left[P_t-P_T+2\phi\int_t^T X_s ds + 2\rho X_T\right] = \frac{1}{2\kappa}\left(P_t-2\phi\int_0^t X_s ds - N_t\right), \textrm{ where $N$ is a martingale.} 
 \end{cases}
-\]
-Rewriting the system in vector form, we have
-\[
+\end{align*}
+Rewrite the system in vector form, we have
+\begin{align*}
 \begin{pmatrix} X_t \\ r_t \end{pmatrix} = \begin{pmatrix} x \\ r_0 \end{pmatrix} + \int_0^t \begin{pmatrix} 0 & -1 \\ -\kappa^{-1}\phi & 0 \end{pmatrix} \begin{pmatrix} X_s \\ r_s \end{pmatrix} ds + \frac{1}{2\kappa}\begin{pmatrix} 0 \\ P_t - N_t \end{pmatrix}
-\]
+\end{align*}
 with $r_T = \kappa^{-1}\rho X_T$.
 
-Step 2: Solve the FBSDE for the critical point. For notational ease, let
-\[
- y:=\begin{pmatrix} X \\ r\end{pmatrix},\qquad z:=\begin{pmatrix} 0 \\ P-N\end{pmatrix},\qquad\text{and}\qquad B:=\begin{pmatrix} 0 & -1 \\ -\kappa^{-1}\phi & 0\end{pmatrix},
-\]
-so that the equation reads $y_t = y_0 + \int_0^t B y_s ds + (2\kappa)^{-1}z_t$ and $(\kappa^{-1}\rho, -1)y_T = 0$. This is a linear differential equation in $y$ and well-known to have the solution
-\[
-\ts y_T = \exp((T-t)B)y_t + \frac{1}{2\kappa} \int_t^T \exp((T-s)B) dz_s.
-\]
+\item Solve FBSDE for critical point
+
+For notational ease, let $y:=\begin{pmatrix} X \\ r\end{pmatrix}, z:=\begin{pmatrix} 0 \\ P-N\end{pmatrix}$, and $B:=\begin{pmatrix} 0 & -1 \\ -\kappa^{-1}\phi & 0\end{pmatrix}$, then the equation reads $y_t = y_0 + \int_0^t B y_s ds + (2\kappa)^{-1}z_t$ and $(\kappa^{-1}\rho, -1)y_T = 0$. It is a linear differential equation in $y$ and well-known to have the solution given by the fundamental solution exponential map:
+\begin{align*}
+y_T = \exp((T-t)B)y_t + \frac{1}{2\kappa} \int_t^T \exp((T-s)B) dz_s.
+\end{align*}
 Thus,
-\[
-\ts 0 = q(T-t)y_t + \frac{1}{2\kappa}\int_t^T q(T-s) dz_s,\qquad \textrm{ where } q(t):=(\kappa^{-1}\rho, -1)\exp(tB).
-\]
+\begin{align*}
+0 = q(T-t)y_t + \frac{1}{2\kappa}\int_t^T q(T-s) dz_s, \textrm{ where } q(t):=(\kappa^{-1}\rho, -1)\exp(tB).
+\end{align*}
 Note that $q$ satisfies the vector-valued differential equation $\dot{q}=qB$ with $q(0)=(\kappa^{-1}\rho, -1)$. Rewriting it in scalar-valued form, we obtain a linear second-order differential equation as follows:
 \begin{align*}
 \begin{cases} (\dot{q_1},\dot{q_2})=(-\kappa^{-1}\phi q_2, -q_1) \\ q_1(0)=\kappa^{-1}\rho, q_2(0)=-1 \end{cases}
-\Rightarrow\quad \begin{cases}
-\ddot{q_2}=\kappa^{-1}\phi q_2 \\ q_2(0)=-1, \dot{q_2}(0)=-\kappa^{-1}\rho.
-\end{cases}
+\Rightarrow \begin{cases}
+\ddot{q_2}=\kappa^{-1}\phi q_2 \\ q_2(0)=-1, \dot{q_2}(0)=-\kappa^{-1}\rho
+\end{cases}.
 \end{align*}
-Set $\beta:=\sqrt{\kappa^{-1}\phi}>0$. It is well-known and easily checked that the solution is given% by a linear combination of the fundamental solutions hyperbolic trigonometric functions:
+Set $\beta:=\sqrt{\kappa^{-1}\phi}>0$. It is well-known that the solution is given by a linear combination of the fundamental solutions hyperbolic trigonometric functions:
 \begin{align*}
 q_2(t)=q_2(0)\cosh(\beta t)+\dot{q_2}(0)\beta^{-1}\sinh(\beta t) = -\cosh(\beta t)-\kappa^{-1}\rho\beta^{-1}\sinh(\beta t).
 \end{align*}
 Then from $q_1=-\dot{q_2}$, we also get $q_1(t)=\beta\sinh(\beta t)+\kappa^{-1}\rho\cosh(\beta t)$. Hence, we can express $r^\ast$ via
 \begin{align*}
-&\ts 0=q_1(T-t)X^\ast_t+q_2(T-t)r^\ast_t+\frac{1}{2\kappa}\int_t^T q_2(T-s) d(P_s-N_s) \\
-\Rightarrow\quad &\ts r^\ast_t = -\frac{q_1(T-t)}{q_2(T-t)} X^\ast_t - \frac{1}{2\kappa} \E_t\int_t^T\frac{q_2(T-s)}{q_2(T-t)} dP_s \\
-\Rightarrow\quad &\ts r^\ast_t = \frac{G'(T-t)}{G(T-t)} X^\ast_t - \frac{1}{2\kappa} \int_t^T \frac{G(T-s)}{G(T-t)} d_s(\E_t P_s), \textrm{ with } G(t):=-\beta q_2(t) = \beta\cosh(\beta t)+\kappa^{-1}\rho\sinh(\beta t).
+& 0=q_1(T-t)X^\ast_t+q_2(T-t)r^\ast_t+\frac{1}{2\kappa}\int_t^T q_2(T-s) d(P_s-N_s) \\
+\Rightarrow & r^\ast_t = -\frac{q_1(T-t)}{q_2(T-t)} X^\ast_t - \frac{1}{2\kappa} \E_t\int_t^T\frac{q_2(T-s)}{q_2(T-t)} dP_s \\
+\Rightarrow & r^\ast_t = \frac{G'(T-t)}{G(T-t)} X^\ast_t - \frac{1}{2\kappa} \int_t^T \frac{G(T-s)}{G(T-t)} d_s(\E_t P_s), \textrm{ with } G(t):=-\beta q_2(t) = \beta\cosh(\beta t)+\kappa^{-1}\rho\sinh(\beta t).
 \end{align*}
-In the last equality we use integration by parts to move expectation to the integrator, and it could be understood as pathwise Lebesgue-Stieltjes integral thanks to our remark before the proof. Since both $G$ and $G'$ are bounded from above and below away from zero, we have $\E\abs{r^\ast_t} \le C_1 (x+\int_0^t \E\abs{r^\ast_s} ds) + C_2$ for some $C_1, C_2 > 0$. Applying Gronwall's lemma, we find that $t\mapsto r^\ast_t$ is bounded in $L^1(\Omega)$ and hence admissible.
+In the last equality we use integration by parts to move expectation to the integrator, and it could be understood as pathwise Lebesgue-Stieltjes integral thanks to our remark before the proof.
 
-Defining $v_2$ and $v_1$ as in the statement of the proposition, we have $r^\ast_t = -v_2(t)X^\ast_t -v_1(t)$, which is a linear differential equation (since $r^\ast=-\dot{X^\ast}$), whose solution is given by
-\[
-\ts X^\ast_t = h(0,t)x + \int_0^t h(s,t)v_1(s) ds,\qquad \textrm{ where } h(s,t):=\exp\int_s^t v_2 = \exp\int_s^t -\frac{G'(T-u)}{G(T-u)}du=\frac{G(T-t)}{G(T-s)}.
-\]
+Note that both $G$ and $G'$ are bounded from above and below away from zero, we have for some $C_1, C_2 > 0$, $\E\abs{r^\ast_t} \le C_1 \left(x+\int_0^t \E\abs{r^\ast_s} ds\right) + C_2$. Applying Gronwall, we obtain that $t\mapsto r^\ast_t$ is bounded in $L^1(\Omega)$, and in particular admissible.
 
-Step 3: Compute the value function. Given $r^*$ and $X^*$, it is a straightforward exercise to compute
-\[
- \ts V^\ast_t = P_t X_t^\ast + \kappa\left[v_0(t) + 2 v_1(t) X_t^\ast + v_2(t) (X_t^\ast)^2\right].\qedhere
-\]
-%Instead of directly plugging the optimal strategy $r^\ast$ into the function $r\mapsto V^r_0$, we leverage on the optimality condition, in particular the following two identities:
-%\begin{align*}
-%0 &= \left\langle \frac{\delta V^r_0}{\delta r}(r^\ast), r^\ast \right\rangle = \E\left[\int_0^T P_t r^\ast_t dt - 2\kappa\int_0^T (r^\ast_t)^2 dt - P_T \int_0^T r^\ast_t dt + 2\phi\int_0^T X^\ast_t \int_0^t r^\ast_s ds dt + 2\rho X^\ast_T \int_0^T r^\ast_t dt \right] \\
-%&= \E\left[\int_0^T P_t r^\ast_t dt -2\kappa \int_0^T (r^\ast_t)^2 dt + P_T(X^\ast_T-x) - 2\phi\int_0^T X^\ast_t (X^\ast_t-x) dt - 2\rho X^\ast_T (X^\ast_T-x) \right] \\
-%&= \E\left[\int_0^T P_t r^\ast_t dt -2\kappa \int_0^T (r^\ast_t)^2 dt + P_TX^\ast_T - 2\phi\int_0^T (X^\ast_t)^2 dt - 2\rho (X^\ast_T)^2 \right] -x\E\left[P_T - 2\phi \int_0^T X^\ast_t dt - 2\rho X^\ast_T \right], \\
-%0 &= \E\left[-2\kappa r^\ast_0 + P_0-P_T + 2\phi\int_0^T X^\ast_t dt + 2\rho X^\ast_T\right] = -2\kappa r^\ast_0 + P_0 - \E\left[P_T - 2\phi \int_0^T X^\ast_t dt - 2\rho X^\ast_T \right].
-%\end{align*}
-%It follows that
-%\begin{align*}
-%V^\ast_0 &= V^{r^\ast}_0 = \E\left[\int_0^T (P_t-\kappa r^\ast_t)r^\ast_t dt + P_T X^\ast_T - \int_0^T \phi (X^\ast_t)^2 dt - \rho (X^\ast_T)^2 \right] \\
-%&= \frac{1}{2}\E\left[\int_0^T P_t r^\ast_t dt + P_T X^\ast_T \right] + \frac{1}{2}x(-2\kappa r^\ast_0 + P_0) = \frac{1}{2}\E\left[xP_0 + \int_0^T X^\ast_t dP_t \right] + \frac{1}{2}x(2\kappa v_2(0)x + 2\kappa v_1(0) + P_0) \\
-%&= xP_0 + \kappa(v_2(0)x^2+v_1(0)x) + \frac{1}{2}\E\left[\int_0^T \left(\frac{G(T-t)}{G(T)}x + \int_0^t \frac{G(T-t)}{G(T-s)}v_1(s) ds\right) dP_t\right] \\
-%&= xP_0 + \kappa(v_2(0)x^2+v_1(0)x) + \kappa x \frac{1}{2\kappa}\E\left[\int_0^T \frac{G(T-t)}{G(T)} dP_t\right] + \kappa \E\left[\int_0^T \frac{1}{2\kappa} \E_s\left[\int_s^T \frac{G(T-t)}{G(T-s)} dP_t \right] v_1(s) ds\right] \\
-%&= xP_0 + \kappa(v_2(0)x^2+v_1(0)x) + \kappa x v_1(0) + \kappa \E\left[\int_0^T v_1^2(s) ds\right] = xP_0 + \kappa(v_2(0)x^2 + 2v_1(0)x + v_0(0)),
-%\end{align*}
-%where $v_0$ is defined as in the statement of the proposition.
-\end{proof}
+Define $v_2$ and $v_1$ as in the statement of the proposition, we have $r^\ast_t = -v_2(t)X^\ast_t -v_1(t)$, which is a linear differential equation (since $r^\ast=-\dot{X^\ast}$), whose solutions are given by the fundamental solution:
+\begin{align*}
+X^\ast_t = h(0,t)x + \int_0^t h(s,t)v_1(s) ds, \textrm{ where } h(s,t):=\exp\int_s^t v_2 = \exp\int_s^t -\frac{G'(T-u)}{G(T-u)}du=\frac{G(T-t)}{G(T-s)}.
+\end{align*}
+
+\item Compute value function
+
+Instead of directly plugging the optimal strategy $r^\ast$ into the function $r\mapsto V^r_0$, we leverage on the optimality condition, in particular the following two identities:
+\begin{align*}
+0 &= \left\langle \frac{\delta V^r_0}{\delta r}(r^\ast), r^\ast \right\rangle = \E\left[\int_0^T P_t r^\ast_t dt - 2\kappa\int_0^T (r^\ast_t)^2 dt - P_T \int_0^T r^\ast_t dt + 2\phi\int_0^T X^\ast_t \int_0^t r^\ast_s ds dt + 2\rho X^\ast_T \int_0^T r^\ast_t dt \right] \\
+&= \E\left[\int_0^T P_t r^\ast_t dt -2\kappa \int_0^T (r^\ast_t)^2 dt + P_T(X^\ast_T-x) - 2\phi\int_0^T X^\ast_t (X^\ast_t-x) dt - 2\rho X^\ast_T (X^\ast_T-x) \right] \\
+&= \E\left[\int_0^T P_t r^\ast_t dt -2\kappa \int_0^T (r^\ast_t)^2 dt + P_TX^\ast_T - 2\phi\int_0^T (X^\ast_t)^2 dt - 2\rho (X^\ast_T)^2 \right] -x\E\left[P_T - 2\phi \int_0^T X^\ast_t dt - 2\rho X^\ast_T \right], \\
+0 &= \E\left[-2\kappa r^\ast_0 + P_0-P_T + 2\phi\int_0^T X^\ast_t dt + 2\rho X^\ast_T\right] = -2\kappa r^\ast_0 + P_0 - \E\left[P_T - 2\phi \int_0^T X^\ast_t dt - 2\rho X^\ast_T \right].
+\end{align*}
+It follows that
+\begin{align*}
+V^\ast_0 &= V^{r^\ast}_0 = \E\left[\int_0^T (P_t-\kappa r^\ast_t)r^\ast_t dt + P_T X^\ast_T - \int_0^T \phi (X^\ast_t)^2 dt - \rho (X^\ast_T)^2 \right] \\
+&= \frac{1}{2}\E\left[\int_0^T P_t r^\ast_t dt + P_T X^\ast_T \right] + \frac{1}{2}x(-2\kappa r^\ast_0 + P_0) = \frac{1}{2}\E\left[xP_0 + \int_0^T X^\ast_t dP_t \right] + \frac{1}{2}x(2\kappa v_2(0)x + 2\kappa v_1(0) + P_0) \\
+&= xP_0 + \kappa(v_2(0)x^2+v_1(0)x) + \frac{1}{2}\E\left[\int_0^T \left(\frac{G(T-t)}{G(T)}x + \int_0^t \frac{G(T-t)}{G(T-s)}v_1(s) ds\right) dP_t\right] \\
+&= xP_0 + \kappa(v_2(0)x^2+v_1(0)x) + \kappa x \frac{1}{2\kappa}\E\left[\int_0^T \frac{G(T-t)}{G(T)} dP_t\right] + \kappa \E\left[\int_0^T \frac{1}{2\kappa} \E_s\left[\int_s^T \frac{G(T-t)}{G(T-s)} dP_t \right] v_1(s) ds\right] \\
+&= xP_0 + \kappa(v_2(0)x^2+v_1(0)x) + \kappa x v_1(0) + \kappa \E\left[\int_0^T v_1^2(s) ds\right] = xP_0 + \kappa(v_2(0)x^2 + 2v_1(0)x + v_0(0)),
+\end{align*}
+where $v_0$ is defined as in the statement of the proposition.
 
 Note that the value function consists of two parts: $xP_0$ is the paper value of the position marking to market, and $\kappa(v_0(0)+2v_1(0)x+v_2(0)x^2)$ is the estimated risk-adjusted implementation shortfall of the meta order under the optimal strategy.
+\end{enumerate}
+\end{proof}
 
 \begin{rem}
-Observe that our representation of $V^\ast_t$ and the definitions of $v_i(t)$, $i=0,1,2$, are different from those in \cite{lehalle2017incorporating}. These modifications reflect our FBSDE approach. In particular, $G$ plays the role of ``the fundamental solution'' of a linear differential equation, and the expression of $r^\ast$ in terms of $G$ is a consequence of Duhamel's principle. Of course, our representations of $r^\ast$ and $V^\ast$ do coincide with those of~\cite{lehalle2017incorporating} by uniqueness.
+Our definition of $V^\ast_t$ and $v_i(t)$ are different from those in \cite{lehalle2017incorporating} (even with their model assumptions). The modification reflects our FBSDE approach. In particular, $G$ plays the role of ``the fundamental solution'' of a linear differential equation, and the expression of $r^\ast$ in terms of $G$ comes from Duhamel's principle. Of course, both $r^\ast$ do coincide (or we are violating uniqueness of optimal strategy).
 
-In the setup of \cite{lehalle2017incorporating}, $d_s(\E_t P_s) = (E_t I_s)ds$ by Fubini's theorem. In the case of a general semi-martingale asset price, our result simply confirms that the investor only needs to do the same thing as before to achieve the optimum: forecasting price trends until the end of the trading period.\close
+In the setup of \cite{lehalle2017incorporating}, $d_s(\E_t P_s) = (E_t I_s)ds$ by Fubini's theorem. In the case of a general semi-martingale asset price, our result simply confirms that the investor only needs to do the same thing as before to achieve the optimum: forecasting price trends till the end of the trading period.
 \end{rem}
 
 
 
 % with price limit
-\section{Optimal strategy in the case of a price cap}
-Let us now consider the special case in which the price process is a martingale reflected at some level $c$. For this, we shall compute $\E_t P_s$ if $P=S-(M-c)_+$ for some $c\in\mathbb{R}$, $S\in\mathcal{H}^1$ a martingale, and $M_t:=\sup_{u\in[0,t]}S_u$:
+\section{Optimal strategy in the case of a price limit}
+We are mostly interested in the optimal strategy, and especially how it changes under the presence of a price cap. From the main result, we shall compute $\E_t P_s, \forall s\in[t,T]$, with the extra assumption that $P=S-(M-c)_+$ for some $c\in\mathbb{R}$, $S\in\mathcal{S}^1$ a martingale and $M_t:=\sup_{u\in[0,t]}S_u$:
 \begin{align*}
 & \E_t P_s = \E_t[S_s-(M_s-c)_+] = S_t-\E_t(M_s-c)_+ = S_t-(M_t-c)_+ - \E_t\left[(M_s-c)_+ - (M_t-c)_+\right] \\
 =& P_t -\left\{ \E_t\left[(M_s-c)_+; M_t\le c\right] + \E_t\left[(M_s-c)-(M_t-c); M_t > c\right] \right\} \\
 =& P_t -\left\{ \E_t\left[(M_s-c)_+; M_t\le c\right] + \E_t\left[(M_s-M_t)_+; M_t > c\right] \right\} = P_t - \E_t\left[(M_s-c\vee M_t)_+\right].
 \end{align*}
-Note that $d_s(\E_t P_s) = -d_s\left[\E_t(M_s-c\vee M_t)_+\right] = -d_s L_s(t)$, where $L_s(t):=\E_t(M_s-c\vee M_t)_+$ is the price at time $t$ of a lookback call option on $S$ maturing at time $s$ with the fixed strike $c\vee M_t$. We thus have reduced the problem of optimal trading with a price cap to the computation of the Theta of a lookback call option.
+Note that $d_s(\E_t P_s) = -d_s\left[\E_t(M_s-c\vee M_t)_+\right] = -d_s L_s(t)$, where $L_s(t):=\E_t(M_s-c\vee M_t)_+$ is the price at time $t$ of a lookback call option on $S$ maturing at time $s$ with the fixed strike $c\vee M_t$. We thus have reduced the problem of optimal trading with a price cap to option pricing.
 
-%\begin{rem}
-%Indeed, if $S$ is a time-homogeneous Markov process, then all we need is just the Greek theta of the lookback call. (If $S$ is not time-homogeneous, there is a distinction between the forward and backward time variables and the definition of the Greek theta may be ambiguous.)
-%\end{rem}
+\begin{rem}
+Indeed, if $S$ is a time-homogeneous Markov process, then all we need is just the Greek theta of the lookback call. (If $S$ is not time-homogeneous, there is a distinction between the forward and backward time variables and the definition of the Greek theta may be ambiguous.)
+\end{rem}
 
 We devote the following to the computation of $L_s(t)$. One way is to remove the dependency on the running maximum $M$ as follows:
-\begin{multline*}
-\ts L_s(t) = \E_t(M_s-c\vee M_t)_+ = \E_t \int_{c\vee M_t}^{\infty}\I_{(-\infty,M_s)}(y) dy = \int_{c\vee M_t}^\infty \E_t \I_{(-\infty,M_s)}(y)dy \\
- \ts = \int_{c\vee M_t}^\infty \P_t(M_s > y) dy= \int_{c\vee M_t}^\infty \P_t(\tau_t(y) \le s) dy,
-\end{multline*}
-where $\tau_t(y):=\inf\{s\in[t,\infty] : S_s> y\}$ is the first hitting time of the set $(y,\infty)$ after time $t$ by $S$. Note that the identity $\P_t(M_s > y) = \P_t(\tau_t(y)\le s)$ is true here since $y\ge M_t\ge S_t$; otherwise it could be false as the first hitting time $\tau_t(y)$ after time $t$ does not encode the information of the historical maximum. In several special cases, the first hitting time distribution is known explicitly, thus giving explicit formulae for the optimal trading strategy in feedback form. We shall do so for the case when $S$ is either an arithmetic or a geometric Brownian motion.
+\begin{align*}
+& L_s(t) = \E_t(M_s-c\vee M_t)_+ = \E_t \int_{c\vee M_t}^{\infty}\I_{(-\infty,M_s)}(y) dy = \int_{c\vee M_t}^\infty \E_t \I_{(-\infty,M_s)}(y)dy = \int_{c\vee M_t}^\infty \P_t(M_s > y) dy \\
+=& \int_{c\vee M_t}^\infty \P_t(\tau_t(y) \le s) dy,
+\end{align*}
+where $\tau_t(y):=\inf\{s\in[t,\infty] : S_s> y\}$ is the first hitting time of the set $(y,\infty)$ after time $t$ with respect to $S$. Note that the identity $\P_t(M_s > y) = \P_t(\tau_t(y)\le s)$ is true here since $y\ge M_t\ge S_t$; otherwise it could be false as the first hitting time $\tau_t(y)$ after time $t$ does not encode the information of historical maximum.
+
+In some special cases, we can compute the first hitting time explicitly and thus give an explicit formula for the optimal trading strategy in feedback form. The most obvious examples are $S$ being arithmetic and geometric Brownian motions. The more general case of $S$ being a diffusion can also be expressed in terms of solution to a linear heat equation.
 
 \subsection{Arithmetic Brownian motion}
-Suppose that $S:=S_0 \sigma B$ where $B$ is a standard one-dimensional Brownian motion, and $S_0\in\mathbb{R}$ and $\sigma\in\mathbb{R}_{++}$ are constants, so that $L_s(t)$ is the price of a lookback call in the Bachelier model. A straightforward calculation shows that
-\[
- \ts d_s L_s(t) = \frac{1}{\sqrt{s-t}}p\bigl(\frac{c-P_t}{\sqrt{s-t}}\bigr)ds,\qquad\text{where } p(x):=\frac{1}{\sqrt{2\pi}}e^{-\frac{1}{2}x^2}.
-\]
-With this, the optimal selling rate is
+Suppose that $S:=B$ where $B$ is a standard one-dimensional Brownian motion. Then by the reflection principle, $\forall s\in[t,T], y\ge M_t, \P_t(\tau_t(y)\le s) = \P^{t,B_t}(\tau_t(y)\le s) = 2\P^{t,B_t}(B_s>y)$.
+
+Therefore, $L_s(t)=\int_{c\vee M_t}2\P^{t,B_t}(B_s > y) dy=2\E^{t,B_t}(B_s-c\vee M_t)_+ = 2u(s-t,B_t; c\vee M_t)$, where $u(\theta,x;K):=\E^{0,x}(B_\theta-K)_+$ is the price of a vanilla European call under the Bachelier model. We take advantage of the partial differential equation (PDE) characterization of the option price:
 \begin{align*}
-r^\ast_t &\ts= -\frac{1}{2\kappa G(T-t)}\left(-2\kappa G'(T-t) X_t - \int_t^T \frac{1}{\sqrt{s-t}} G(T-s) p\bigl(\frac{c-P_t}{\sqrt{s-t}}\bigr) ds\right) \\
-&= \bigl[2\kappa\beta\cosh(\beta (T-t))+2\rho\sinh(\beta (T-t))\bigr]^{-1} \\
-&\hspace{1.5cm} \times \Bigl[2\left[\rho\beta\cosh(\beta (T-t))+\phi\sinh(\beta (T-t))\right] X_t\\
-&\ts\hspace{2.5cm} + \int_t^T \frac{1}{\sqrt{2\pi(s-t)}}\bigl[\beta\cosh(\beta (T-s))+\kappa^{-1}\rho\sinh(\beta (T-s))\bigr] \exp{\left(-\frac{1}{2}\frac{(c-P_t)^2}{s-t}\right)} ds \Bigr],
+u(\theta,x;K) = \left[(\cdot-K)_+ \ast p(\theta,\cdot)\right](x) \iff
+\begin{cases}
+\partial_\theta u - \frac{1}{2}\partial^2_x u =0, & \theta\in\mathbb{R}_{++}, x,K\in\mathbb{R} \\
+u(0,x;K)=(x-K)_+, & x,K\in\mathbb{R} \\
+\abs{u(\theta,x;K)} \le C\sqrt{\theta}(1+\abs{x}+\abs{K}), & \theta\in\mathbb{R}_+, x,K\in\mathbb{R}
+\end{cases},
 \end{align*}
-where we recall that $\beta=\sqrt{\kappa^{-1}\phi}$.
-
-
-%\subsection{Arithmetic Brownian motion}
-%Suppose that $S:=B$ where $B$ is a standard one-dimensional Brownian motion. Then by the reflection principle, $\forall s\in[t,T], y\ge M_t, \P_t(\tau_t(y)\le s) = \P^{t,B_t}(\tau_t(y)\le s) = 2\P^{t,B_t}(B_s>y)$.
-%
-%Therefore, $L_s(t)=\int_{c\vee M_t}2\P^{t,B_t}(B_s > y) dy=2\E^{t,B_t}(B_s-c\vee M_t)_+ = 2u(s-t,B_t; c\vee M_t)$, where $u(\theta,x;K):=\E^{0,x}(B_\theta-K)_+$ is the price of a vanilla European call under the Bachelier model. We take advantage of the partial differential equation (PDE) characterization of the option price:
-%\begin{align*}
-%u(\theta,x;K) = \left[(\cdot-K)_+ \ast p(\theta,\cdot)\right](x) \iff
-%\begin{cases}
-%\partial_\theta u - \frac{1}{2}\partial^2_x u =0, & \theta\in\mathbb{R}_{++}, x,K\in\mathbb{R} \\
-%u(0,x;K)=(x-K)_+, & x,K\in\mathbb{R} \\
-%\abs{u(\theta,x;K)} \le C\sqrt{\theta}(1+\abs{x}+\abs{K}), & \theta\in\mathbb{R}_+, x,K\in\mathbb{R}
-%\end{cases},
-%\end{align*}
-%where $p(\theta,x):=(2\pi\theta)^{-1/2}\exp\left(-\frac{x^2}{2\theta}\right)$ is the transitional probability density kernel of the standard Brownian motion (or the fundamental solution of the heat equation). Thus,
-%\begin{align*}
-%& d_s L_s(t) = 2\partial_\theta u(s-t,B_t;c\vee M_t) ds = \partial^2_x u(s-t,B_t;c\vee M_t) ds = \left\{\left[\partial^2_x (\cdot-c\vee M_t)_+\right]\ast p(s-t,\cdot)\right\}(B_t) ds \\
-%=& \left\{\delta(\cdot-c\vee M_t) \ast p(s-t,\cdot)\right\}(B_t) ds = p(s-t,B_t-c\vee M_t)ds = p(s-t,B_t-(c\vee M_t-c)-c) ds \\
-%=& p(s-t, S_t-(M_t-c)_+ -c) ds = p(s-t,P_t-c)ds = p(s-t,c-P_t)ds,
-%\end{align*}
-%and the optimal selling rate is
-%\begin{align*}
-%r^\ast_t &= -\frac{1}{2\kappa G(T-t)}\left(-2\kappa G'(T-t) X_t - \int_t^T G(T-s)p(s-t,c-P_t) ds\right) \\
-%&= -\left[2\kappa\beta\cosh(\beta (T-t))+2\rho\sinh(\beta (T-t))\right]^{-1} \\
-%& \cdot \left(- 2\left[\rho\beta\cosh(\beta (T-t))+\phi\sinh(\beta (T-t))\right] X_t - \int_t^T \left[\beta\cosh(\beta (T-s))+\kappa^{-1}\rho\sinh(\beta (T-s))\right] \frac{\exp{\left(-\frac{(c-P_t)^2}{2(s-t)}\right)}}{\sqrt{2\pi(s-t)}} ds \right),
-%\end{align*}
-%where $\beta:=\sqrt{\kappa^{-1}\phi}$.
+where $p(\theta,x):=(2\pi\theta)^{-1/2}\exp\left(-\frac{x^2}{2\theta}\right)$ is the transitional probability density kernel of the standard Brownian motion (or the fundamental solution of the heat equation). Thus,
+\begin{align*}
+& d_s L_s(t) = 2\partial_\theta u(s-t,B_t;c\vee M_t) ds = \partial^2_x u(s-t,B_t;c\vee M_t) ds = \left\{\left[\partial^2_x (\cdot-c\vee M_t)_+\right]\ast p(s-t,\cdot)\right\}(B_t) ds \\
+=& \left\{\delta(\cdot-c\vee M_t) \ast p(s-t,\cdot)\right\}(B_t) ds = p(s-t,B_t-c\vee M_t)ds = p(s-t,B_t-(c\vee M_t-c)-c) ds \\
+=& p(s-t, S_t-(M_t-c)_+ -c) ds = p(s-t,P_t-c)ds = p(s-t,c-P_t)ds,
+\end{align*}
+and the optimal selling rate is
+\begin{align*}
+r^\ast_t &= -\frac{1}{2\kappa G(T-t)}\left(-2\kappa G'(T-t) X_t - \int_t^T G(T-s)p(s-t,c-P_t) ds\right) \\
+&= -\left[2\kappa\beta\cosh(\beta (T-t))+2\rho\sinh(\beta (T-t))\right]^{-1} \\
+& \cdot \left(- 2\left[\rho\beta\cosh(\beta (T-t))+\phi\sinh(\beta (T-t))\right] X_t - \int_t^T \left[\beta\cosh(\beta (T-s))+\kappa^{-1}\rho\sinh(\beta (T-s))\right] \frac{\exp{\left(-\frac{(c-P_t)^2}{2(s-t)}\right)}}{\sqrt{2\pi(s-t)}} ds \right),
+\end{align*}
+where $\beta:=\sqrt{\kappa^{-1}\phi}$.
 
 \subsection{Geometric Brownian motion}
-Let now $S$ be a geometric Brownian motion, i.e.\ $S_t:=S_0\exp\left(\sigma B_t-\frac{1}{2}\sigma^2 t\right)$ for a standard Brownian motion $B$, where $S_0, \sigma \in\mathbb{R}_{++}$ are constants. With this, the computation of the optimal selling rate boils down to the computation of the Theta of a lookback call in the Black-Scholes model. Explicitly, we find that
-\[
-\ts d_s L_s(t) = S_t\left[ \frac{1}{\sqrt{s-t}}p\left(\frac{1}{\sqrt{s-t}}\log\bigl(\frac{c-P_t}{S_t}+1\bigr)-\frac{\sqrt{s-t}}{2} \right)+\frac{1}{2}\int_{\log\left(\frac{c-P_t}{S_t}+1\right)}^\infty \frac{1}{\sqrt{s-t}}p\left(\frac{1}{\sqrt{s-t}}z-\frac{\sqrt{s-t}}{2}\right)dz \right] ds.
-\]
-{\color{blue}Using the change of variables $\tilde z := \frac{1}{\sqrt{s-t}}z-\frac{\sqrt{s-t}}{2}$ and the symmetry of $p$, this can equivalently be written as
+Now suppose that $S$ is a standard geometric Brownian motion, i.e. $S_t:=\mathcal{E}(B)_t = \exp\left(B_t-\frac{1}{2}t\right)$ in which $B$ is a standard Brownian motion. We would like to compute $\P_t(\tau_t(y)\le s) = \P^{0,S_t}(\tau_0(y)\le s-t)$ for $y>M_t$.
+
+For simplicity, we will compute $\P^{0,x}(\tau_0(y)\le \theta)$ for $y>x$. Define $\tilde{B}_t:=B_t-\frac{1}{2}t$ and $Z_t:=\exp\left(-\frac{1}{2}\tilde{B}_t-\frac{1}{8}t\right)$. Set $\tilde\tau(z):=\inf\{t\in[0,\infty] : \tilde{B}_t = z\}$. Let $\tilde\P$ be such that $\frac{d\P}{d\tilde\P}=Z_\theta$, then by Girsanov's theorem, $\{\tilde{B}_t\}_{t\in[0,\theta]}$ is a Brownian motion under $\tilde\P$. Thus, with knowledge of the first hitting time of a standard Brownian motion,
 \begin{align*}
- \ts d_s L_s(t) &\ts= S_t\left[ \frac{1}{\sqrt{s-t}}p\left(\frac{1}{\sqrt{s-t}}\log\bigl(\frac{c-P_t}{S_t}+1\bigr)-\frac{\sqrt{s-t}}{2} \right)+\frac{1}{2}\int_{\log\left(\frac{c-P_t}{S_t}+1\right)}^\infty \frac{1}{\sqrt{s-t}}p\left(\frac{1}{\sqrt{s-t}}z-\frac{\sqrt{s-t}}{2}\right)dz \right] ds\\
-  &\ts = S_t\left[ \frac{1}{\sqrt{s-t}}p\left(\frac{\sqrt{s-t}}{2}-\frac{1}{\sqrt{s-t}}\log\bigl(\frac{c-P_t}{S_t}+1\bigr) \right)+\frac{1}{2}\int_{\frac{1}{\sqrt{s-t}}\log\left(\frac{c-P_t}{S_t}+1\right) - \frac{\sqrt{s-t}}{2}}^\infty p(\tilde z)d\tilde z \right] ds.
+& \P^{0,x}(\tau_0(y)\le \theta) = \P(\tilde\tau(\log(y/x)) \le \theta) = \tilde\E\left[Z_\theta \I_{\{\tilde\tau(\log(y/x))\le \theta\}}\right] = \tilde\E\left[Z_{\tilde\tau(\log(y/x))} \I_{\{\tilde\tau(\log(y/x))\le \theta\}}\right] \\
+=& \tilde\E\left[\exp\left(-\frac{1}{2}\log(y/x)-\frac{1}{8}\tilde\tau(\log(y/x))\right) \I_{\{\tilde\tau(\log(y/x))\le \theta\}}\right] = \int_0^\theta (y/x)^{-1/2}e^{-t/8} d_t\tilde\P(\tilde\tau(\log(y/x)) \le t) \\
+=& \int_0^\theta (y/x)^{-1/2}e^{-t/8} d_t\left(2\tilde\P(\tilde{B}_t>\log(y/x))\right) = \int_0^\theta (y/x)^{-1/2}e^{-t/8} d_t\left(2\int_{\log(y/x)}^\infty p(t,z) dz\right) \\
+=& \int_0^\theta (y/x)^{-1/2}e^{-t/8} \left(\int_{\log(y/x)}^\infty 2\partial_t p(t,z) dz\right) dt = \int_0^\theta (y/x)^{-1/2}e^{-t/8} \left(\int_{\log(y/x)}^\infty \partial^2_z p(t,z) dz\right) dt \\
+=& -\int_0^\theta (y/x)^{-1/2}e^{-t/8} \partial_z p(t,\log(y/x)) dt, \quad \textrm{ where } p(t,z):=(2\pi t)^{-1/2}\exp\left(-\frac{z^2}{2t}\right).
 \end{align*}
-Now denote by $\mathcal N$ the standard normal cumulative distribution function and set
-\[
- \ts f(P_t,S_t,s,t) := \frac{\sqrt{s-t}}{2} - \frac{1}{\sqrt{s-t}}\log\left(\frac{c-P_t}{S_t}+1\right).
-\]
-Then the equation for $d_s L_s(t)$ simplifies further to
+Therefore, let $z:=\log(y/x)$ we have
 \begin{align*}
- \ts d_s L_s(t) &\ts= S_t\left[ \frac{1}{\sqrt{s-t}}p\bigl(f(P_t,S_t,s,t)\bigr)+\frac{1}{2}\bigl(1 - \mathcal N\bigl(-f(P_t,S_t,s,t)\bigr)\bigr)\right] ds\\
-  &\ts= S_t\left[ \frac{1}{\sqrt{s-t}}p\bigl(f(P_t,S_t,s,t)\bigr)+\frac{1}{2}\mathcal N\bigl(f(P_t,S_t,s,t)\bigr)\right] ds.
+& \int_K^\infty \P^{0,x}(\tau_0(y)\le \theta) dy = -\int_{\log(K/x)}^\infty \int_0^\theta e^{-z/2} e^{-t/8} \partial_z p(t,z) dt d(xe^{z}) = -x \int_0^\theta e^{-t/8} \int_{\log(K/x)}^\infty e^{z/2} \partial_z p(t,z)) dz dt \\
+=& x \int_0^\theta e^{-t/8} \left[(K/x)^{1/2} p(t,\log(K/x)) + \int_{\log(K/x)}^\infty \frac{1}{2}e^{z/2}p(t,z) dz\right] dt \\
+=& x \int_0^\theta \left[p(t,\log(K/x)-t/2) + \frac{1}{2}\int_{\log(K/x)}^\infty p(t,z-t/2) dz\right] dt.
 \end{align*}
-With this, it follows that the optimal selling rate $r^*$ is given by
-\[
- \ts r_t^* = \frac{G'(T-t)}{G(T-t)} X_t + \frac{S_t}{2\kappa}\int_t^T  \frac{G(T-s)}{G(T-t)} \bigl[ \frac{1}{\sqrt{s-t}}p\bigl(f(P_t,S_t,s,t)\bigr)+\frac{1}{2}\mathcal N\bigl(f(P_t,S_t,s,t)\bigr)\bigr] ds.
-\]
-In particular, at time $t=0$ and upon assuming that $P:=P_0=S_0$, this yields
+With $x=S_t, K=c\vee M_t=(c\vee M_t -c - S_t) + c + S_t =c-P_t+S_t$, and $\theta=s-t$, we obtain
 \begin{align*}
- \ts r_0^* &\ts= \frac{G'(T)}{G(T)} x + \frac{P}{2\kappa}\int_t^T  \frac{G(T-s)}{G(T)} \bigl[ \frac{1}{\sqrt{s}}p\bigl(f(P,P,s,0)\bigr)+\frac{1}{2}\mathcal N\bigl(f(P,P,s,0)\bigr)\bigr] ds\\
-           &\ts= \bigl[2\kappa\beta\cosh(\beta T)+2\rho\sinh(\beta T)\bigr]^{-1}\\
-					 &\ts\hspace{1.5cm}\times\Bigl[ 2\bigl[\rho\beta\cosh(\beta T)+\phi\sinh(\beta T)\bigr] x\\
-					 &\ts\hspace{2.5cm}+ P\int_t^T  \bigl[\beta\cosh(\beta (T-s))+\kappa^{-1}\rho\sinh(\beta (T-s))\bigr] \bigl[ \frac{1}{\sqrt{s}}p\bigl(\frac{\sqrt{s}}{2} - \frac{1}{\sqrt{s}}\log\left(\frac{c}{P}\right)\bigr)\\
-					 &\ts\hspace{10.5cm}+\frac{1}{2}\mathcal N\bigl(\frac{\sqrt{s}}{2} - \frac{1}{\sqrt{s}}\log\left(\frac{c}{P}\right)\bigr)\bigr] ds\Bigr].
+& L_s(t)=S_t \int_0^{s-t} \left[ p\left(\tau,\log\left(\frac{c-P_t}{S_t}+1\right)-\tau/2 \right)+\frac{1}{2}\int_{\log\left(\frac{c-P_t}{S_t}+1\right)}^\infty p(\tau,z-\tau/2)dz \right] d\tau \\
+\Rightarrow & d_s L_s(t) = S_t\left[ p\left(s-t,\log\left(\frac{c-P_t}{S_t}+1\right)-\frac{s-t}{2} \right)+\frac{1}{2}\int_{\log\left(\frac{c-P_t}{S_t}+1\right)}^\infty p\left(s-t,z-\frac{s-t}{2}\right)dz \right] ds.
 \end{align*}
-}
+In short, we also have an explicit formula for the optimal selling rate if $S$ is a geometric Brownian motion. 
 
+\subsection{It\^o Diffusion}
+If $S$ is a diffusion given by the stochastic differential equation (SDE) $dS_t = \sigma(t,S_t) dB_t$, where $\sigma$ is uniformly Lipschitz in space and $B$ is a standard Brownian motion (note that $S$ is a martingale), then the cumulative distribution function (CDF) of the first hitting time $\P^{t,x}(\tau_t(y)\le s)=:u(t,x;s,y)$ can be characterized as the bounded solution to the following linear heat equation:
+\begin{align*}
+\begin{cases}
+(\partial_t + \mathcal{L}^S)u = \partial_t u + \frac{1}{2}\sigma^2\partial^2_x u = 0, & t<s, x<y \\
+u(t,y;s,y)=1, & t<s \\
+u(s,x;s,y)=\I_{\{x=y\}}, & x<y
+\end{cases}.
+\end{align*}
+Then we can write $L_s(t) = \int_{c\vee M_t} u(t,B_t;s,y) dy$.
 
-%\subsection{Geometric Brownian motion}
-%Now suppose that $S$ is a standard geometric Brownian motion, i.e. $S_t:=\mathcal{E}(B)_t = \exp\left(B_t-\frac{1}{2}t\right)$ in which $B$ is a standard Brownian motion. We would like to compute $\P_t(\tau_t(y)\le s) = \P^{0,S_t}(\tau_0(y)\le s-t)$ for $y>M_t$.
-%
-%For simplicity, we will compute $\P^{0,x}(\tau_0(y)\le \theta)$ for $y>x$. Define $\tilde{B}_t:=B_t-\frac{1}{2}t$ and $Z_t:=\exp\left(-\frac{1}{2}\tilde{B}_t-\frac{1}{8}t\right)$. Set $\tilde\tau(z):=\inf\{t\in[0,\infty] : \tilde{B}_t = z\}$. Let $\tilde\P$ be such that $\frac{d\P}{d\tilde\P}=Z_\theta$, then by Girsanov's theorem, $\{\tilde{B}_t\}_{t\in[0,\theta]}$ is a Brownian motion under $\tilde\P$. Thus, with knowledge of the first hitting time of a standard Brownian motion,
-%\begin{align*}
-%& \P^{0,x}(\tau_0(y)\le \theta) = \P(\tilde\tau(\log(y/x)) \le \theta) = \tilde\E\left[Z_\theta \I_{\{\tilde\tau(\log(y/x))\le \theta\}}\right] = \tilde\E\left[Z_{\tilde\tau(\log(y/x))} \I_{\{\tilde\tau(\log(y/x))\le \theta\}}\right] \\
-%=& \tilde\E\left[\exp\left(-\frac{1}{2}\log(y/x)-\frac{1}{8}\tilde\tau(\log(y/x))\right) \I_{\{\tilde\tau(\log(y/x))\le \theta\}}\right] = \int_0^\theta (y/x)^{-1/2}e^{-t/8} d_t\tilde\P(\tilde\tau(\log(y/x)) \le t) \\
-%=& \int_0^\theta (y/x)^{-1/2}e^{-t/8} d_t\left(2\tilde\P(\tilde{B}_t>\log(y/x))\right) = \int_0^\theta (y/x)^{-1/2}e^{-t/8} d_t\left(2\int_{\log(y/x)}^\infty p(t,z) dz\right) \\
-%=& \int_0^\theta (y/x)^{-1/2}e^{-t/8} \left(\int_{\log(y/x)}^\infty 2\partial_t p(t,z) dz\right) dt = \int_0^\theta (y/x)^{-1/2}e^{-t/8} \left(\int_{\log(y/x)}^\infty \partial^2_z p(t,z) dz\right) dt \\
-%=& -\int_0^\theta (y/x)^{-1/2}e^{-t/8} \partial_z p(t,\log(y/x)) dt, \quad \textrm{ where } p(t,z):=(2\pi t)^{-1/2}\exp\left(-\frac{z^2}{2t}\right).
-%\end{align*}
-%Therefore, let $z:=\log(y/x)$ we have
-%\begin{align*}
-%& \int_K^\infty \P^{0,x}(\tau_0(y)\le \theta) dy = -\int_{\log(K/x)}^\infty \int_0^\theta e^{-z/2} e^{-t/8} \partial_z p(t,z) dt d(xe^{z}) = -x \int_0^\theta e^{-t/8} \int_{\log(K/x)}^\infty e^{z/2} \partial_z p(t,z)) dz dt \\
-%=& x \int_0^\theta e^{-t/8} \left[(K/x)^{1/2} p(t,\log(K/x)) + \int_{\log(K/x)}^\infty \frac{1}{2}e^{z/2}p(t,z) dz\right] dt \\
-%=& x \int_0^\theta \left[p(t,\log(K/x)-t/2) + \frac{1}{2}\int_{\log(K/x)}^\infty p(t,z-t/2) dz\right] dt.
-%\end{align*}
-%With $x=S_t, K=c\vee M_t=(c\vee M_t -c - S_t) + c + S_t =c-P_t+S_t$, and $\theta=s-t$, we obtain
-%\begin{align*}
-%& L_s(t)=S_t \int_0^{s-t} \left[ p\left(\tau,\log\left(\frac{c-P_t}{S_t}+1\right)-\tau/2 \right)+\frac{1}{2}\int_{\log\left(\frac{c-P_t}{S_t}+1\right)}^\infty p(\tau,z-\tau/2)dz \right] d\tau \\
-%\Rightarrow & d_s L_s(t) = S_t\left[ p\left(s-t,\log\left(\frac{c-P_t}{S_t}+1\right)-\frac{s-t}{2} \right)+\frac{1}{2}\int_{\log\left(\frac{c-P_t}{S_t}+1\right)}^\infty p\left(s-t,z-\frac{s-t}{2}\right)dz \right] ds.
-%\end{align*}
-%In short, we also have an explicit formula for the optimal selling rate if $S$ is a geometric Brownian motion. 
+Now that one has to solve a PDE for diffusive $S$, we can also directly obtain a PDE for $L_s(t)$. Set $u(t,x,y;s,K):=\E\left[(M_s-K)_+ \vert S_t=x, M_t=y\right]$, then $u$ solves the following linear heat equation:
+\begin{align*}
+\begin{cases}
+(\partial_t u + \mathcal{L}^S)u = \partial_t u + \frac{1}{2}\sigma^2\partial^2_x u = 0, & t<s, x<y \\
+\partial_y u(t,y,y;s,K) = 0, & t<s \\
+u(s,x,y;s,K) = (y-K)_+, & x<y
+\end{cases}
+\end{align*}
+Then we can write $L_s(t) = u(t,B_t,M_t;s,c\vee M_t)$.
 
-%\subsection{It\^o Diffusion}
-%If $S$ is a diffusion given by the stochastic differential equation (SDE) $dS_t = \sigma(t,S_t) dB_t$, where $\sigma$ is uniformly Lipschitz in space and $B$ is a standard Brownian motion (note that $S$ is a martingale), then the cumulative distribution function (CDF) of the first hitting time $\P^{t,x}(\tau_t(y)\le s)=:u(t,x;s,y)$ can be characterized as the bounded solution to the following linear heat equation:
-%\begin{align*}
-%\begin{cases}
-%(\partial_t + \mathcal{L}^S)u = \partial_t u + \frac{1}{2}\sigma^2\partial^2_x u = 0, & t<s, x<y \\
-%u(t,y;s,y)=1, & t<s \\
-%u(s,x;s,y)=\I_{\{x=y\}}, & x<y
-%\end{cases}.
-%\end{align*}
-%Then we can write $L_s(t) = \int_{c\vee M_t} u(t,B_t;s,y) dy$.
-%
-%Now that one has to solve a PDE for diffusive $S$, we can also directly obtain a PDE for $L_s(t)$. Set $u(t,x,y;s,K):=\E\left[(M_s-K)_+ \vert S_t=x, M_t=y\right]$, then $u$ solves the following linear heat equation:
-%\begin{align*}
-%\begin{cases}
-%(\partial_t u + \mathcal{L}^S)u = \partial_t u + \frac{1}{2}\sigma^2\partial^2_x u = 0, & t<s, x<y \\
-%\partial_y u(t,y,y;s,K) = 0, & t<s \\
-%u(s,x,y;s,K) = (y-K)_+, & x<y
-%\end{cases}
-%\end{align*}
-%Then we can write $L_s(t) = u(t,B_t,M_t;s,c\vee M_t)$.
+\subsection{Price floor and model assumptions}
+Our proposition also applies to the case of liquidating a positive position of an asset in the presence of a price floor, and in particular, there is a unique optimal strategy absolutely continuous with respect to time. Formally, let $P=S+(f-M)_+$ be the asset price in which $S\in\mathcal{S}^1$ is a martingale and $M_t:=\inf_{u\in[0,t]}S_u$ is the running minimum. This is the dual case of an asset of price $-P$ and a price cap at $-f$. Thus, $P_t\ge f$ with equality iff $S_t=M_t\le f$, and $E_t P_s = P_t + \E_t[(f\wedge M_t-M_s)_+]$ from the beginning of this section. Therefore, one can solve the optimal liquidation problem with a price floor by pricing fixed-strike lookback puts. In the case of $S=B$, a standard Brownian motion, the optimal selling rate is
+\begin{align*}
+r^\ast_t &= -\frac{1}{2\kappa G(T-t)}\left(-2\kappa G'(T-t) X_t + \int_t^T G(T-s)p(s-t,P_t-f) ds\right) \\
+&= -\left[2\kappa\beta\cosh(\beta (T-t))+2\rho\sinh(\beta (T-t))\right]^{-1} \\
+& \cdot \left(- 2\left[\rho\beta\cosh(\beta (T-t))+\phi\sinh(\beta (T-t))\right] X_t + \int_t^T \left[\beta\cosh(\beta (T-s))+\kappa^{-1}\rho\sinh(\beta (T-s))\right] \frac{\exp{\left(-\frac{(P_t-f)^2}{2(s-t)}\right)}}{\sqrt{2\pi(s-t)}} ds \right),
+\end{align*}
+Note that the sign of the integral term is flipped.
 
-%\subsection{Price floor and model assumptions}
-%Our proposition also applies to the case of liquidating a positive position of an asset in the presence of a price floor, and in particular, there is a unique optimal strategy absolutely continuous with respect to time. Formally, let $P=S+(f-M)_+$ be the asset price in which $S\in\mathcal{H}^1$ is a martingale and $M_t:=\inf_{u\in[0,t]}S_u$ is the running minimum. This is the dual case of an asset of price $-P$ and a price cap at $-f$. Thus, $P_t\ge f$ with equality iff $S_t=M_t\le f$, and $E_t P_s = P_t + \E_t[(f\wedge M_t-M_s)_+]$ from the beginning of this section. Therefore, one can solve the optimal liquidation problem with a price floor by pricing fixed-strike lookback puts. In the case of $S=B$, a standard Brownian motion, the optimal selling rate is
-%\begin{align*}
-%r^\ast_t &= -\frac{1}{2\kappa G(T-t)}\left(-2\kappa G'(T-t) X_t + \int_t^T G(T-s)p(s-t,P_t-f) ds\right) \\
-%&= -\left[2\kappa\beta\cosh(\beta (T-t))+2\rho\sinh(\beta (T-t))\right]^{-1} \\
-%& \cdot \left(- 2\left[\rho\beta\cosh(\beta (T-t))+\phi\sinh(\beta (T-t))\right] X_t + \int_t^T \left[\beta\cosh(\beta (T-s))+\kappa^{-1}\rho\sinh(\beta (T-s))\right] \frac{\exp{\left(-\frac{(P_t-f)^2}{2(s-t)}\right)}}{\sqrt{2\pi(s-t)}} ds \right),
-%\end{align*}
-%Note that the sign of the integral term is flipped.
-%
-%However, it makes little economic sense to interpret $\kappa r_t$ as the temporary price impact of selling $r_t dt$ units of the asset at the price floor $f$, because by definition there should be no downward price impact at the floor. In this case, one could argue that it is a trading cost from commissions or exchange fees instead of temporary price impact, but in reality, these costs are usually proportional to the total shares traded or even decreasing in trading intensities. Therefore, we think that our model is not suitable for asset liquidation in the presence of a price floor.
+However, it makes little economic sense to interpret $\kappa r_t$ as the temporary price impact of selling $r_t dt$ units of the asset at the price floor $f$, because by definition there should be no downward price impact at the floor. In this case, one could argue that it is a trading cost from commissions or exchange fees instead of temporary price impact, but in reality, these costs are usually proportional to the total shares traded or even decreasing in trading intensities. Therefore, we think that our model is not suitable for asset liquidation in the presence of a price floor.
 
 % references
 \bibliographystyle{plainnat}
