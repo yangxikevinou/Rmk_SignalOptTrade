@@ -65,11 +65,18 @@ Artificial price limits are sometimes enforced in the financial market due to re
 
 % model setup
 \section{Model setup}
-Fix a filtered probability space $(\Omega, \F, \{\F_t\}_{t\in[0,T]}, \P)$ satisfying the usual conditions. Let $P$, the asset price, be a semi-martingale in $\mathcal{S}^1:=\{S \textrm{ adapted c\'adl\'ag} : \E S^\ast_T = \E[\sup_{t\in[0,T]} \abs{S_t}] < \infty\}$. Denote the position in the asset at time $t$ by $X_t$, where the initial position is given as $X_0:=x$. The investor controls the liquidation intensity $-\dot{X} =: r \in \mathcal{V} := \{v \textrm{ progressively measurable} : \int_0^T \abs{v_t} dt < \infty \}$. Given the transaction cost coefficient $\kappa\in\mathbb{R}_{++}:=(0,\infty)$, the penalty coefficients for running and terminal inventory $\phi\in\mathbb{R}_{++}$ and $\rho\in\mathbb{R}_{++}$, respectively, the investor aims to maximize the inventory risk adjusted profit and loss of liquidation:
+Fix a filtered probability space $(\Omega, \F, \{\F_t\}_{t\in[0,T]}, \P)$ satisfying the usual conditions. Let $P$, the asset price, be a semi-martingale in
+\begin{align*}
+\mathcal{H}^1:=\{ & S \textrm{ adapted c\'adl\'ag} : S=M+A \textrm{ is the canonical decomposition, } \\
+& \textrm{ where $M$ is the (local) martingale component and $A$ is the predictable component, and } \\
+& \E\left[\langle M\rangle^{1/2}_T\right] + \E\left[\int_0^T \abs{d A_t}\right] < \infty\}.
+\end{align*}
+%$\mathcal{H}^1:=\{S \textrm{ adapted c\'adl\'ag} : \E S^\ast_T = \E[\sup_{t\in[0,T]} \abs{S_t}] < \infty\}$.
+Denote the position in the asset at time $t$ by $X_t$, where the initial position is given as $X_0:=x$. The investor controls the liquidation intensity $-\dot{X} =: r \in \mathcal{V} := \{v \textrm{ progressively measurable} : \int_0^T \abs{v_t} dt < \infty \}$. Given the transaction cost coefficient $\kappa\in\mathbb{R}_{++}:=(0,\infty)$, the penalty coefficients for running and terminal inventory $\phi\in\mathbb{R}_{++}$ and $\rho\in\mathbb{R}_{++}$, respectively, the investor aims to maximize the inventory risk adjusted profit and loss of liquidation:
 \[
 \ts V^r:= \E\left[\int_0^T (P_t - \kappa r_t)r_t dt + P_T X_T - \int_0^T \phi X_t^2 dt - \rho X_T^2 \right].
 \]
-This setup is more general than in \cite{lehalle2017incorporating}, which requires $(P,I)$ to be a diffusion, where $I$ is the drift of $P$. We are mainly interested in the case in which $P$ has a given price cap $c$, i.e.\ $P:=S-(M-c)_+$, where $S\in\mathcal{S}^1$ is a martingale and $M_t:=\sup_{u\in[0,t]} S_u$ is its running maximum. Note that $P_t\le c$ with equality iff $S_t=M_t\ge c$. Such formulation of the price cap reflects the reality of minimal regulatory intervention in the market.
+This setup is more general than in \cite{lehalle2017incorporating}, which requires $(P,I)$ to be a diffusion, where $I$ is the drift of $P$. We are mainly interested in the case in which $P$ has a given price cap $c$, i.e.\ $P:=S-(M-c)_+$, where $S\in\mathcal{H}^1$ is a martingale and $M_t:=\sup_{u\in[0,t]} S_u$ is its running maximum. Note that $P_t\le c$ with equality iff $S_t=M_t\ge c$. Such formulation of the price cap reflects the reality of minimal regulatory intervention in the market.
 %However, we will not impose this assumption in the next section in which we solve the general optimization problem.
 
 
@@ -97,7 +104,7 @@ where $X_t^{\ast} := X_t^{r^\ast}$ and, with $\beta:=\sqrt{\kappa^{-1}\phi}$,
 \end{prop}
 
 \begin{rem}
-Note that $s\mapsto \E_t P_s$ is of finite variation and hence the integral in the of definition of $v_1(t)$ makes sense. Indeed, since $P\in \mathcal{S}^1$, i.e. $P^\ast_T \in L^1$, it admits a unique Doob-Meyer decomposition $P=A+S$ in which $A\in\mathcal{S}^1$ is predictable and of finite variation and $S\in\mathcal{S}^1$ is a martingale. Thus by definition,
+Note that $s\mapsto \E_t P_s$ is of finite variation and hence the integral in the of definition of $v_1(t)$ makes sense. Indeed, since $P\in \mathcal{H}^1$, it admits a unique Doob-Meyer decomposition $P=A+S$ in which $A\in\mathcal{H}^1$ is predictable and of finite variation and $S\in\mathcal{H}^1$ is a martingale. Thus by definition,
 \[
  \ts \sum_i \abs{\E_t P_{s_i} - \E_t P_{s_{i-1}}} \le \E_t\left[\sum_i \abs{A_{s_i} - A_{s_{i-1}}}\right] \le \E_t \int_t^T \abs{d A_s} < \infty.\closeEqn
 \]
@@ -195,7 +202,7 @@ In the setup of \cite{lehalle2017incorporating}, $d_s(\E_t P_s) = (E_t I_s)ds$ b
 
 % with price limit
 \section{Optimal strategy in the case of a price cap}
-Let us now consider the special case in which the price process is a martingale reflected at some level $c$. For this, we shall compute $\E_t P_s$ if $P=S-(M-c)_+$ for some $c\in\mathbb{R}$, $S\in\mathcal{S}^1$ a martingale, and $M_t:=\sup_{u\in[0,t]}S_u$:
+Let us now consider the special case in which the price process is a martingale reflected at some level $c$. For this, we shall compute $\E_t P_s$ if $P=S-(M-c)_+$ for some $c\in\mathbb{R}$, $S\in\mathcal{H}^1$ a martingale, and $M_t:=\sup_{u\in[0,t]}S_u$:
 \begin{align*}
 & \E_t P_s = \E_t[S_s-(M_s-c)_+] = S_t-\E_t(M_s-c)_+ = S_t-(M_t-c)_+ - \E_t\left[(M_s-c)_+ - (M_t-c)_+\right] \\
 =& P_t -\left\{ \E_t\left[(M_s-c)_+; M_t\le c\right] + \E_t\left[(M_s-c)-(M_t-c); M_t > c\right] \right\} \\
@@ -215,7 +222,7 @@ We devote the following to the computation of $L_s(t)$. One way is to remove the
 where $\tau_t(y):=\inf\{s\in[t,\infty] : S_s> y\}$ is the first hitting time of the set $(y,\infty)$ after time $t$ by $S$. Note that the identity $\P_t(M_s > y) = \P_t(\tau_t(y)\le s)$ is true here since $y\ge M_t\ge S_t$; otherwise it could be false as the first hitting time $\tau_t(y)$ after time $t$ does not encode the information of the historical maximum. In several special cases, the first hitting time distribution is known explicitly, thus giving explicit formulae for the optimal trading strategy in feedback form. We shall do so for the case when $S$ is either an arithmetic or a geometric Brownian motion.
 
 \subsection{Arithmetic Brownian motion}
-Suppose that $S:=B$ where $B$ is a standard one-dimensional Brownian motion, so that $L_s(t)$ is the price of a lookback call in the Bachelier model. A straightforward calculation shows that
+Suppose that $S:=S_0 \sigma B$ where $B$ is a standard one-dimensional Brownian motion, and $S_0\in\mathbb{R}$ and $\sigma\in\mathbb{R}_{++}$ are constants, so that $L_s(t)$ is the price of a lookback call in the Bachelier model. A straightforward calculation shows that
 \[
  \ts d_s L_s(t) = \frac{1}{\sqrt{s-t}}p\bigl(\frac{c-P_t}{\sqrt{s-t}}\bigr)ds,\qquad\text{where } p(x):=\frac{1}{\sqrt{2\pi}}e^{-\frac{1}{2}x^2}.
 \]
@@ -256,7 +263,7 @@ where we recall that $\beta=\sqrt{\kappa^{-1}\phi}$.
 %where $\beta:=\sqrt{\kappa^{-1}\phi}$.
 
 \subsection{Geometric Brownian motion}
-Let now $S$ be a geometric Brownian motion, i.e.\ $S_t:=\exp(B_t-\frac{1}{2}t)$ for a standard Brownian motion $B$. With this, the computation of the optimal selling rate boils down to the computation of the Theta of a lookback call in the Black-Scholes model. Explicitly, we find that
+Let now $S$ be a geometric Brownian motion, i.e.\ $S_t:=S_0\exp\left(\sigma B_t-\frac{1}{2}\sigma^2 t\right)$ for a standard Brownian motion $B$, where $S_0, \sigma \in\mathbb{R}_{++}$ are constants. With this, the computation of the optimal selling rate boils down to the computation of the Theta of a lookback call in the Black-Scholes model. Explicitly, we find that
 \[
 \ts d_s L_s(t) = S_t\left[ \frac{1}{\sqrt{s-t}}p\left(\frac{1}{\sqrt{s-t}}\log\bigl(\frac{c-P_t}{S_t}+1\bigr)-\frac{\sqrt{s-t}}{2} \right)+\frac{1}{2}\int_{\log\left(\frac{c-P_t}{S_t}+1\right)}^\infty \frac{1}{\sqrt{s-t}}p\left(\frac{1}{\sqrt{s-t}}z-\frac{\sqrt{s-t}}{2}\right)dz \right] ds.
 \]
@@ -335,7 +342,7 @@ In particular, at time $t=0$ and upon assuming that $P:=P_0=S_0$, this yields
 %Then we can write $L_s(t) = u(t,B_t,M_t;s,c\vee M_t)$.
 
 %\subsection{Price floor and model assumptions}
-%Our proposition also applies to the case of liquidating a positive position of an asset in the presence of a price floor, and in particular, there is a unique optimal strategy absolutely continuous with respect to time. Formally, let $P=S+(f-M)_+$ be the asset price in which $S\in\mathcal{S}^1$ is a martingale and $M_t:=\inf_{u\in[0,t]}S_u$ is the running minimum. This is the dual case of an asset of price $-P$ and a price cap at $-f$. Thus, $P_t\ge f$ with equality iff $S_t=M_t\le f$, and $E_t P_s = P_t + \E_t[(f\wedge M_t-M_s)_+]$ from the beginning of this section. Therefore, one can solve the optimal liquidation problem with a price floor by pricing fixed-strike lookback puts. In the case of $S=B$, a standard Brownian motion, the optimal selling rate is
+%Our proposition also applies to the case of liquidating a positive position of an asset in the presence of a price floor, and in particular, there is a unique optimal strategy absolutely continuous with respect to time. Formally, let $P=S+(f-M)_+$ be the asset price in which $S\in\mathcal{H}^1$ is a martingale and $M_t:=\inf_{u\in[0,t]}S_u$ is the running minimum. This is the dual case of an asset of price $-P$ and a price cap at $-f$. Thus, $P_t\ge f$ with equality iff $S_t=M_t\le f$, and $E_t P_s = P_t + \E_t[(f\wedge M_t-M_s)_+]$ from the beginning of this section. Therefore, one can solve the optimal liquidation problem with a price floor by pricing fixed-strike lookback puts. In the case of $S=B$, a standard Brownian motion, the optimal selling rate is
 %\begin{align*}
 %r^\ast_t &= -\frac{1}{2\kappa G(T-t)}\left(-2\kappa G'(T-t) X_t + \int_t^T G(T-s)p(s-t,P_t-f) ds\right) \\
 %&= -\left[2\kappa\beta\cosh(\beta (T-t))+2\rho\sinh(\beta (T-t))\right]^{-1} \\
