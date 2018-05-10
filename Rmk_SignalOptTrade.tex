@@ -74,12 +74,19 @@ Fix a filtered probability space $(\Omega, \F, \{\F_t\}_{t\in[0,T]}, \P)$ satisf
 %$\mathcal{H}^1:=\{S \textrm{ adapted c\'adl\'ag} : \E S^\ast_T = \E[\sup_{t\in[0,T]} \abs{S_t}] < \infty\}$.
 Denote the position in the asset at time $t$ by $X_t$, where the initial position is given as $X_0:=x$. The investor controls the liquidation intensity $-\dot{X} =: r \in \mathcal{V} := \{v \textrm{ progressively measurable} : \int_0^T \abs{v_t} dt < \infty \}$. Given the transaction cost coefficient $\kappa>0$, the penalty coefficients for running and terminal inventory $\phi>0$ and $\rho>0$, respectively, the investor aims to maximize the inventory risk adjusted profit and loss of liquidation:
 \[
-\ts V^r:= \E\left[\int_0^T (P_t - \kappa r_t)r_t dt + P_T X_T - \int_0^T \phi X_t^2 dt - \rho X_T^2 \right].
+\ts V^r:= \E\left[\underbrace{\int_0^T \overbrace{(P_t - \kappa r_t)}^{\textrm{execution price}} r_t dt}_{\textrm{terminal cash position}} + \underbrace{P_T X_T}_{\stackrel{\textrm{terminal}}{\textrm{asset position}}} - \underbrace{\int_0^T \phi X_t^2 dt}_{\stackrel{\textrm{running}}{\textrm{inventory penalty}}} - \underbrace{\rho X_T^2}_{\stackrel{\textrm{terminal}}{\textrm{inventory penalty}}} \right].
 \]
-This setup is more general than in \cite{lehalle2017incorporating}, which requires $(P,I)$ to be a diffusion, where $I$ is the drift of $P$.
+Sometimes it is convenient to consider the dynamic version of the problem, so we define the controlled value process $t\mapsto V^r_t$ and the maximum value process $t\mapsto V^\ast_t$ as $\forall t\in[0,T]$,
+\begin{align*}
+&\ts V^r_t := \E_t \left[\int_t^T (P_s-\kappa r_s)r_s ds + P_T X_T -\int_t^T \phi X_s^2 ds - \rho X_T^2 \right], \textrm{ where } \E_t:=\E[\cdot \vert \F_t], \textrm{ and} \\
+&\ts V^\ast_t := \esssup_{r\in\mathcal{V}} V^r_t.
+\end{align*}
+This setup is more general than that in \cite{lehalle2017incorporating}, which requires $dP_t = I_t dt + \sigma^P dW_t$ where $I$ is a time-homogeneous continuous Markov process.
 
+\begin{eg}
 The main application we have in mind for this general setup is the case of a price cap. Let $c\in\mathbb{R}$ be the price cap (imposed by the regulator) of the asset price $P$, i.e.\ $P:=S-(M-c)_+$, where $S\in\mathcal{H}^1$ is a martingale and $M_t:=\sup_{u\in[0,t]} S_u$ is its running maximum. Note that $P_t\le c$ with equality iff $S_t=M_t\ge c$. Such formulation of the price cap reflects the reality of minimal regulatory intervention in the market.
 %However, we will not impose this assumption in the next section in which we solve the general optimization problem.
+\end{eg}
 
 
 % solution
@@ -87,13 +94,16 @@ The main application we have in mind for this general setup is the case of a pri
 In our setup, the dynamic programming and differential equation technique in \cite{lehalle2017incorporating} no longer applies, which is why we follow a calculus of variation approach similar to \cite{bouchard2017equilibrium}. It is immediate that the functional $r\mapsto V^r$ is quadratic (including linear and constant terms) with a strictly negative definite quadratic coefficient, and hence there exists a unique maximum characterized by the critical point $r^\ast$, i.e. $\frac{\delta V^r}{\delta r}(r^\ast) =0$, where $\frac{\delta V^r}{\delta r}$ is the G\^ateaux derivative. This approach leads to a system of forward backward stochastic differential equations (FBSDE) characterizing the optimal trading rate and portfolio holding, where the forward equation is given by the dynamics $-\dot{X}=r$ and the backward equation is given by the optimality condition $\frac{\delta V^r}{\delta r}=0$. Fortunately, the system is linear and can be solved explicitly. Once the optimal selling rate $r^\ast$ is known, the maximum value $V^\ast$ is then directly computed by definition. The main result is stated as follows.
 
 \begin{prop}[Formulae for optimal strategy and value function]\label{main}
-Define the stochastic processes $t\mapsto V^r_t$ and $t\mapsto V^\ast_t$ as $\forall t\in[0,T]$,
-\[
-\ts V^r_t := \E_t \left[\int_t^T (P_s-\kappa r_s)r_s ds + P_T X_T -\int_t^T \phi X_s^2 ds - \rho X_T^2 \right], \qquad V^\ast_t := \esssup_{r\in\mathcal{V}} V^r_t,
-\]
-where $\E_t:=\E[\cdot \vert \F_t]$. Then the unique maximizer $r^\ast$ of $r\mapsto V^r$ and the maximum $V^\ast_t$ are given by
+The unique maximizer $r^\ast$ of $r\mapsto V^r$ solves the linear ordinary differential equation (ODE)
 \begin{align*}
-&\ts r^\ast_t = -v_2(t) X_t^{\ast} - v_1(t), \textrm{ or equivalently } X^{\ast}_t = \frac{G(T-t)}{G(T)}x + \int_0^t \frac{G(T-t)}{G(T-s)} v_1(s) ds, \\
+&\ts r^\ast_t = -v_2(t) X_t^{\ast} - v_1(t), \textrm{ where } r^\ast_t = -\dot{X}^\ast_t,
+\end{align*}
+so that the optimal liquidation trajectory is given by
+\begin{align*}
+&\ts X^{\ast}_t = \frac{G(T-t)}{G(T)}x + \int_0^t \frac{G(T-t)}{G(T-s)} v_1(s) ds.
+\end{align*}
+The maximum $V^\ast_t$ is given by
+\begin{align*}
 &\ts V^\ast_t = P_t X_t^{\ast} + \kappa\left[v_0(t) + 2 v_1(t) X_t^{\ast} + v_2(t) (X_t^{\ast})^2\right],
 \end{align*}
 where $X_t^{\ast} := X_t^{r^\ast}$ and, with $\beta:=\sqrt{\kappa^{-1}\phi}$,
@@ -106,7 +116,7 @@ where $X_t^{\ast} := X_t^{r^\ast}$ and, with $\beta:=\sqrt{\kappa^{-1}\phi}$,
 \end{prop}
 
 \begin{rem}
-Note that $s\mapsto \E_t P_s$ is of finite variation and hence the integral in the of definition of $v_1(t)$ makes sense. Indeed, since $P\in \mathcal{H}^1$, it admits a unique Doob-Meyer decomposition $P=A+S$ in which $A\in\mathcal{H}^1$ is predictable and of finite variation and $S\in\mathcal{H}^1$ is a martingale. Thus by definition,
+Note that $s\mapsto \E_t P_s$ is of finite variation and hence the integral in the of definition of $v_1(t)$ makes sense. Indeed, since $P\in \mathcal{H}^1$, it admits a unique Doob-Meyer decomposition $P=A+M$ in which $A\in\mathcal{H}^1$ is predictable and of finite variation and $M\in\mathcal{H}^1$ is a martingale. Thus by definition,
 \[
  \ts \sum_i \abs{\E_t P_{s_i} - \E_t P_{s_{i-1}}} \le \E_t\left[\sum_i \abs{A_{s_i} - A_{s_{i-1}}}\right] \le \E_t \int_t^T \abs{d A_s} < \infty.\closeEqn
 \]
@@ -224,18 +234,31 @@ We devote the following to the computation of $L_s(t)$. One way is to remove the
 where $\tau_t(y):=\inf\{s\in[t,\infty] : S_s> y\}$ is the first hitting time of the set $(y,\infty)$ after time $t$ by $S$. Note that the identity $\P_t(M_s > y) = \P_t(\tau_t(y)\le s)$ is true here since $y\ge M_t\ge S_t$; otherwise it could be false as the first hitting time $\tau_t(y)$ after time $t$ does not encode the information of the historical maximum. In several special cases, the first hitting time distribution is known explicitly, thus giving explicit formulae for the optimal trading strategy in feedback form. We shall do so for the case when $S$ is either an arithmetic or a geometric Brownian motion.
 
 \subsection{Arithmetic Brownian motion}
-Suppose that $S:=S_0 \sigma B$ where $B$ is a standard one-dimensional Brownian motion, and $S_0\in\mathbb{R}$ and $\sigma>0$ are constants, so that $L_s(t)$ is the price of a lookback call in the Bachelier model. A straightforward calculation shows that
+Suppose that $S_t:=S_0(1+ \sigma B_t)$ where $B$ is a standard one-dimensional Brownian motion, and $S_0, \sigma>0$ are constants, so that $L_s(t)$ is the price of a lookback call in the Bachelier model. A straightforward calculation shows that
 \[
- \ts d_s L_s(t) = \frac{1}{\sqrt{s-t}}p\bigl(\frac{c-P_t}{\sqrt{s-t}}\bigr)ds,\qquad\text{where } p(x):=\frac{1}{\sqrt{2\pi}}e^{-\frac{1}{2}x^2}.
+ \ts d_s L_s(t) = \frac{S_0\sigma}{\sqrt{s-t}}p\bigl(\frac{c-P_t}{S_0\sigma\sqrt{s-t}}\bigr)ds,\qquad\text{where } p(x):=\frac{1}{\sqrt{2\pi}}e^{-\frac{1}{2}x^2}.
 \]
 With this, the optimal selling rate is
 \begin{align*}
-r^\ast_t &\ts= -\frac{1}{2\kappa G(T-t)}\left(-2\kappa G'(T-t) X_t - \int_t^T \frac{1}{\sqrt{s-t}} G(T-s) p\bigl(\frac{c-P_t}{\sqrt{s-t}}\bigr) ds\right) \\
+r^\ast_t &\ts= -\frac{1}{2\kappa G(T-t)}\left(-2\kappa G'(T-t) X_t - \int_t^T \frac{S_0\sigma}{\sqrt{s-t}} G(T-s) p\bigl(\frac{c-P_t}{S_0\sigma\sqrt{s-t}}\bigr) ds\right) \\
 &= \bigl[2\kappa\beta\cosh(\beta (T-t))+2\rho\sinh(\beta (T-t))\bigr]^{-1} \\
 &\hspace{1.5cm} \times \Bigl[2\left[\rho\beta\cosh(\beta (T-t))+\phi\sinh(\beta (T-t))\right] X_t\\
-&\ts\hspace{2.5cm} + \int_t^T \frac{1}{\sqrt{2\pi(s-t)}}\bigl[\beta\cosh(\beta (T-s))+\kappa^{-1}\rho\sinh(\beta (T-s))\bigr] \exp{\left(-\frac{1}{2}\frac{(c-P_t)^2}{s-t}\right)} ds \Bigr],
+&\ts\hspace{2.5cm} + \int_t^T \frac{S_0\sigma}{\sqrt{2\pi(s-t)}}\bigl[\beta\cosh(\beta (T-s))+\kappa^{-1}\rho\sinh(\beta (T-s))\bigr] \exp{\left(-\frac{1}{2}\frac{(c-P_t)^2}{S_0^2\sigma^2(s-t)}\right)} ds \Bigr],
 \end{align*}
 where we recall that $\beta=\sqrt{\kappa^{-1}\phi}$.
+
+{\color{red}
+A straightforward calculation shows that
+\begin{align*}
+\ts d_s L_s(t) = S_0\sigma^2 p\left(\sigma^2(s-t),\frac{c-P_t}{S_0}\right) ds, \qquad \textrm{ where } p(\theta,x):=(2\pi\theta)^{-1/2}\exp\left(-\frac{x^2}{2\theta}\right).
+\end{align*}
+With this, the optimal selling rate is
+\begin{align*}
+r^\ast_t &\ts= \frac{G'(T-t)}{G(T-t)}X_t + \frac{S_0\sigma^2}{2\kappa}\int_t^T \frac{G(T-s)}{G(T-t)}p\left(\sigma^2(s-t),\frac{c-P_t}{S_0}\right) ds \\
+&\ts = r^M_t + \frac{S_0\sigma^2}{2\kappa}\int_0^\tau \frac{G(\tau-s)}{G(\tau)}p\left(\sigma^2 s, \frac{c-P_t}{S_0}\right) ds,
+\end{align*}
+where $\tau:=T-t$ is the time remaining and $r^M_t:=\frac{G'(\tau)}{G(\tau)}X_t$ is the optimal liquidating rate as if the price was a martingale (as in Algrem-Chriss model). Note that $r^M$ is independent of the asset price.
+}
 
 
 %\subsection{Arithmetic Brownian motion}
@@ -267,33 +290,46 @@ where we recall that $\beta=\sqrt{\kappa^{-1}\phi}$.
 \subsection{Geometric Brownian motion}
 Let now $S$ be a geometric Brownian motion, i.e.\ $S_t:=S_0\exp\left(\sigma B_t-\frac{1}{2}\sigma^2 t\right)$ for a standard Brownian motion $B$, where $S_0, \sigma >0$ are constants. With this, the computation of the optimal selling rate boils down to the computation of the Theta of a lookback call in the Black-Scholes model. Explicitly, we find that
 \[
-\ts d_s L_s(t) = S_t\left[ \frac{1}{\sqrt{s-t}}p\left(\frac{1}{\sqrt{s-t}}\log\bigl(\frac{c-P_t}{S_t}+1\bigr)-\frac{\sqrt{s-t}}{2} \right)+\frac{1}{2}\int_{\log\left(\frac{c-P_t}{S_t}+1\right)}^\infty \frac{1}{\sqrt{s-t}}p\left(\frac{1}{\sqrt{s-t}}z-\frac{\sqrt{s-t}}{2}\right)dz \right] ds.
+\ts d_s L_s(t) = S_t\left[ \frac{\sigma}{\sqrt{s-t}}p\left(\frac{1}{\sigma\sqrt{s-t}}\log\bigl(\frac{c-P_t}{S_t}+1\bigr)-\frac{\sigma\sqrt{s-t}}{2} \right)+\frac{1}{2}\int_{\log\left(\frac{c-P_t}{S_t}+1\right)}^\infty \frac{\sigma}{\sqrt{s-t}}p\left(\frac{1}{\sigma\sqrt{s-t}}z-\frac{\sigma\sqrt{s-t}}{2}\right)dz \right] ds.
 \]
-{\color{blue}Using the change of variables $\tilde z := \frac{1}{\sqrt{s-t}}z-\frac{\sqrt{s-t}}{2}$ and the symmetry of $p$, this can equivalently be written as
+{\color{blue}Using the change of variables $\tilde z := \frac{1}{\sigma\sqrt{s-t}}z-\frac{\sigma\sqrt{s-t}}{2}$ and the symmetry of $p$, this can equivalently be written as
 \begin{align*}
- \ts d_s L_s(t) &\ts= S_t\left[ \frac{1}{\sqrt{s-t}}p\left(\frac{1}{\sqrt{s-t}}\log\bigl(\frac{c-P_t}{S_t}+1\bigr)-\frac{\sqrt{s-t}}{2} \right)+\frac{1}{2}\int_{\log\left(\frac{c-P_t}{S_t}+1\right)}^\infty \frac{1}{\sqrt{s-t}}p\left(\frac{1}{\sqrt{s-t}}z-\frac{\sqrt{s-t}}{2}\right)dz \right] ds\\
-  &\ts = S_t\left[ \frac{1}{\sqrt{s-t}}p\left(\frac{\sqrt{s-t}}{2}-\frac{1}{\sqrt{s-t}}\log\bigl(\frac{c-P_t}{S_t}+1\bigr) \right)+\frac{1}{2}\int_{\frac{1}{\sqrt{s-t}}\log\left(\frac{c-P_t}{S_t}+1\right) - \frac{\sqrt{s-t}}{2}}^\infty p(\tilde z)d\tilde z \right] ds.
+ \ts d_s L_s(t) &\ts= S_t\left[ \frac{\sigma}{\sqrt{s-t}}p\left(\frac{1}{\sigma\sqrt{s-t}}\log\bigl(\frac{c-P_t}{S_t}+1\bigr)-\frac{\sigma\sqrt{s-t}}{2} \right)+\frac{1}{2}\int_{\log\left(\frac{c-P_t}{S_t}+1\right)}^\infty \frac{\sigma}{\sqrt{s-t}}p\left(\frac{1}{\sigma\sqrt{s-t}}z-\frac{\sigma\sqrt{s-t}}{2}\right)dz \right] ds\\
+  &\ts = S_t\left[ \frac{\sigma}{\sqrt{s-t}}p\left(\frac{\sigma\sqrt{s-t}}{2}-\frac{1}{\sigma\sqrt{s-t}}\log\bigl(\frac{c-P_t}{S_t}+1\bigr) \right)+\frac{1}{2}\sigma^2 \int_{\frac{1}{\sigma\sqrt{s-t}}\log\left(\frac{c-P_t}{S_t}+1\right) - \frac{\sigma\sqrt{s-t}}{2}}^\infty p(\tilde z)d\tilde z \right] ds.
 \end{align*}
 Now denote by $\mathcal N$ the standard normal cumulative distribution function and set
 \[
- \ts f(P_t,S_t,s,t) := \frac{\sqrt{s-t}}{2} - \frac{1}{\sqrt{s-t}}\log\left(\frac{c-P_t}{S_t}+1\right).
+ \ts f(P_t,S_t,s,t) := \frac{\sigma\sqrt{s-t}}{2} - \frac{1}{\sigma\sqrt{s-t}}\log\left(\frac{c-P_t}{S_t}+1\right).
 \]
 Then the equation for $d_s L_s(t)$ simplifies further to
 \begin{align*}
- \ts d_s L_s(t) &\ts= S_t\left[ \frac{1}{\sqrt{s-t}}p\bigl(f(P_t,S_t,s,t)\bigr)+\frac{1}{2}\bigl(1 - \mathcal N\bigl(-f(P_t,S_t,s,t)\bigr)\bigr)\right] ds\\
-  &\ts= S_t\left[ \frac{1}{\sqrt{s-t}}p\bigl(f(P_t,S_t,s,t)\bigr)+\frac{1}{2}\mathcal N\bigl(f(P_t,S_t,s,t)\bigr)\right] ds.
+ \ts d_s L_s(t) &\ts= S_t\left[ \frac{\sigma}{\sqrt{s-t}}p\bigl(f(P_t,S_t,s,t)\bigr)+\frac{1}{2}\sigma^2 \bigl(1 - \mathcal N\bigl(-f(P_t,S_t,s,t)\bigr)\bigr)\right] ds\\
+  &\ts= S_t\left[ \frac{\sigma}{\sqrt{s-t}}p\bigl(f(P_t,S_t,s,t)\bigr)+\frac{1}{2}\sigma^2 \mathcal N\bigl(f(P_t,S_t,s,t)\bigr)\right] ds.
 \end{align*}
 With this, it follows that the optimal selling rate $r^*$ is given by
 \[
- \ts r_t^* = \frac{G'(T-t)}{G(T-t)} X_t + \frac{S_t}{2\kappa}\int_t^T  \frac{G(T-s)}{G(T-t)} \bigl[ \frac{1}{\sqrt{s-t}}p\bigl(f(P_t,S_t,s,t)\bigr)+\frac{1}{2}\mathcal N\bigl(f(P_t,S_t,s,t)\bigr)\bigr] ds.
+ \ts r_t^* = \frac{G'(T-t)}{G(T-t)} X_t + \frac{S_t}{2\kappa}\int_t^T  \frac{G(T-s)}{G(T-t)} \bigl[ \frac{\sigma}{\sqrt{s-t}}p\bigl(f(P_t,S_t,s,t)\bigr)+\frac{1}{2}\sigma^2 \mathcal N\bigl(f(P_t,S_t,s,t)\bigr)\bigr] ds.
 \]
 In particular, at time $t=0$ and upon assuming that $P:=P_0=S_0$, this yields
 \begin{align*}
  \ts r_0^* &\ts= \frac{G'(T)}{G(T)} x + \frac{P}{2\kappa}\int_t^T  \frac{G(T-s)}{G(T)} \bigl[ \frac{1}{\sqrt{s}}p\bigl(f(P,P,s,0)\bigr)+\frac{1}{2}\mathcal N\bigl(f(P,P,s,0)\bigr)\bigr] ds\\
            &\ts= \bigl[2\kappa\beta\cosh(\beta T)+2\rho\sinh(\beta T)\bigr]^{-1}\\
 					 &\ts\hspace{1.5cm}\times\Bigl[ 2\bigl[\rho\beta\cosh(\beta T)+\phi\sinh(\beta T)\bigr] x\\
-					 &\ts\hspace{2.5cm}+ P\int_t^T  \bigl[\beta\cosh(\beta (T-s))+\kappa^{-1}\rho\sinh(\beta (T-s))\bigr] \bigl[ \frac{1}{\sqrt{s}}p\bigl(\frac{\sqrt{s}}{2} - \frac{1}{\sqrt{s}}\log\left(\frac{c}{P}\right)\bigr)\\
-					 &\ts\hspace{10.5cm}+\frac{1}{2}\mathcal N\bigl(\frac{\sqrt{s}}{2} - \frac{1}{\sqrt{s}}\log\left(\frac{c}{P}\right)\bigr)\bigr] ds\Bigr].
+					 &\ts\hspace{2.5cm}+ P\int_0^T  \bigl[\beta\cosh(\beta (T-s))+\kappa^{-1}\rho\sinh(\beta (T-s))\bigr] \bigl[ \frac{\sigma}{\sqrt{s}}p\bigl(\frac{\sigma\sqrt{s}}{2} - \frac{1}{\sigma\sqrt{s}}\log\left(\frac{c}{P}\right)\bigr)\\
+					 &\ts\hspace{10.5cm}+\frac{1}{2}\sigma^2 \mathcal N\bigl(\frac{\sigma\sqrt{s}}{2} - \frac{1}{\sigma\sqrt{s}}\log\left(\frac{c}{P}\right)\bigr)\bigr] ds\Bigr].
+\end{align*}
+}
+
+{\color{red}
+For the sake of numerical implementation (e.g. in Matlab), we express our results as follows.
+\begin{align*}
+d_s L_s(t) = S_t\sigma^2 \left[p\left(\log\left(\frac{c-P_t}{S_t}+1 \right); \frac{1}{2}\sigma^2(s-t), \sigma^2(s-t)\right) + \frac{1}{2}\left(1-\mathcal{N}\left(\log\left(\frac{c-P_t}{S_t}+1 \right); \frac{1}{2}\sigma^2(s-t), \sigma^2(s-t)\right)\right)\right] ds,
+\end{align*}
+where $p(\cdot;\mu,\Sigma)$ and $\mathcal{N}(\cdot;\mu, \Sigma)$ are respectively the probability density function and the cumulative distribution function of a normal random variable with mean $\mu\in\mathbb{R}$ and variance $\Sigma>0$.
+
+With $\tau$ and $r^M$ as in the case of arithmetic Brownian motion, and further introducing the ``log-moneyness'' variable $l:=\log\left(\frac{c-P_t}{S_t}+1\right)$, we have
+\begin{align*}
+r^\ast_t = r^M_t + \frac{S_t\sigma^2}{2\kappa}\int_0^\tau \frac{G(\tau-s)}{G(\tau)}\left[p(l;\frac{1}{2}\sigma^2 s, \sigma^2 s)+\frac{1}{2}(1-\mathcal{N}(l;\frac{1}{2}\sigma^2 s, \sigma^2 s))\right] ds
 \end{align*}
 }
 
