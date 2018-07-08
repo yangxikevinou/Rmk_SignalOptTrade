@@ -71,9 +71,9 @@
 \author{
 Christoph Belak\thanks{University of Trier, Department IV -- Mathematics, Universit\"atsring 19, 54296 Trier, Germany, e-mail: \texttt{belak@uni-trier.de}.}
 \and
-Johannes Muhle-Karbe\thanks{Carnegie Mellon University of Michigan, Department of Mathematical Sciences, 5000 Forbes Avenue, Pittsburgh, PA 15213, USA, email \texttt{ johannesmk@cmu.edu}. Parts of this research were completed while this author was visiting ETH Z\"urich. He thanks the Forschungsinstitut f\"ur Mathematik and H.~Mete Soner for their hospitality. }
+Johannes Muhle-Karbe\thanks{Carnegie Mellon University, Department of Mathematical Sciences, 5000 Forbes Avenue, Pittsburgh, PA 15213, USA, email \texttt{ johannesmk@cmu.edu}. Parts of this research were completed while this author was visiting ETH Z\"urich. He thanks the Forschungsinstitut f\"ur Mathematik and H.~Mete Soner for their hospitality. }
 \and
-Kevin Ou\thanks{Carnegie Mellon University of Michigan, Department of Mathematical Sciences, 5000 Forbes Avenue, Pittsburgh, PA 15213, USA, email \texttt{ yangxio@andrew.cmu.edu}.}
+Kevin Ou\thanks{Carnegie Mellon University, Department of Mathematical Sciences, 5000 Forbes Avenue, Pittsburgh, PA 15213, USA, email \texttt{ yangxio@andrew.cmu.edu}.}
 }
 
 \date{\today}
@@ -200,7 +200,7 @@ the FBSDE~\eqref{eq:FBSDE} can be written in vector form as
 \[
 dY_t = B Y_t \de t + \frac{1}{2\lambda}dZ_t, \quad Y^1_0=x, \quad (\Gamma/\lambda, -1)Y_T = 0.
 \]
-Integration by parts shows that $d(e^{-B t}Y_t)=\frac{1}{2\lambda}dZ_t$ and in turn
+Integration by parts shows that $d(e^{-B t}Y_t)=\frac{1}{2\lambda}e^{-B t}dZ_t$ and in turn
 \begin{align*}
 Y_T &= e^{B(T-t)}Y_t+\frac{1}{2\lambda}\int_t^T e^{B(T-s)}dZ_s.%= q(T-t)Y_t+\frac{1}{2\lambda}\int_t^T q(T-s) dZ_s.
 \end{align*}
@@ -412,6 +412,30 @@ With this, it follows that the optimal selling rate $r^*$ is given by
 \section{Numerical Illustration}
 
 \texttt{To be done..}
+
+\begin{figure}
+\includegraphics[]{ABM_lin.eps}
+\caption{Optimal liquidation VS straight line liquidation (Arithmetic Brownian motion case)}
+\label{fig:ABM_lin}
+\end{figure}
+
+\begin{figure}
+\includegraphics[]{ABM_AC.eps}
+\caption{Optimal liquidation VS Almgren-Chriss liquidation (Arithmetic Brownian motion case)}
+\label{fig:ABM_lin}
+\end{figure}
+
+\begin{figure}
+\includegraphics[]{GBM_lin.eps}
+\caption{Optimal liquidation VS straight line liquidation (Geometric Brownian motion case)}
+\label{fig:ABM_lin}
+\end{figure}
+
+\begin{figure}
+\includegraphics[]{GBM_AC.eps}
+\caption{Optimal liquidation VS Almgren-Chriss liquidation (Geometric Brownian motion case)}
+\label{fig:ABM_lin}
+\end{figure}
 
 % In particular, at time $t=0$ and upon assuming that $P:=P_0=S_0$, this yields
 % \begin{align*}
