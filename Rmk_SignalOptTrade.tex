@@ -3,8 +3,17 @@
 \usepackage{hyperref,titling,titlesec,pdfpages,setspace,fancyhdr,multicol,appendix}
 \usepackage[numbers]{natbib}
 \usepackage[margin=1in]{geometry} 
+\usepackage{pgfplots}
+\usepackage{tkz-euclide}
+
+% pgfplots/tikz
+\pgfplotsset{compat=newest}
+\pgfplotsset{plot coordinates/math parser=false}
+\usetikzlibrary{plotmarks}
 
 % formatting
+\newlength\figheight
+\newlength\figwidth
 %\setlength{\parskip}{2ex}
 %\setlength{\parindent}{0pt}
 
@@ -102,30 +111,32 @@ TBD
 
 In classical models of optimal liquidation, the unaffected asset price is assumed to be a martingale \cite{almgren.chriss.01,almgren.01,obizhaeva.wang.13,alfonsi.al.??,predoiu.??}. This allows to focus on the liquidation program, while abstracting signals about future price changes. The effect of such signals\footnote{Typical examples include order book imbalances \cite{} or forecasts of the future order flow of other market participants.} is studied using stochastic control techniques in \cite{cartea.jaimungal.??,lehalle2017incorporating}, leading to a PDE characterization for general Markovian signals and explicit formulas in the special case where the signal processes have Ornstein-Uhlenbeck dynamics. 
 
-A rather different signal about future price changes is studied by Neumann and Schied~\cite{neumann.schied.??}. Motivated by caps on exchange rates enforced by central banks,\footnote{A recent example is the upper bound on the CHF/EUR exchange rate guaranteed by the Swiss National Bank.} they study the optimal liquidation of assets that reflect off an upper threshold.  Under the assumption that the liquidating agent only sells at this most favorable execution price,\footnote{Unlike in the standard optimal execution models surveyed above, the resulting optimal trading rate is singular, since it only acts on the local time of the reflected price process. Accordingly, the liquidity costs in the model of \cite{neumann.schied.??} is imposed on the trading rate in local time.} they characterize the optimal trading strategy by a PDE that admits a probabilistic representation in terms of catalytic superprocesses. 
+A rather different signal about future price changes is studied by Neuman and Schied~\cite{neumann.schied.??}. Motivated by caps on exchange rates enforced by central banks,\footnote{A recent example is the upper bound on the CHF/EUR exchange rate guaranteed by the Swiss National Bank.} they study the optimal liquidation of assets that reflect off an upper threshold.  Under the assumption that the liquidating agent only sells at this most favorable execution price,\footnote{Unlike in the standard optimal execution models surveyed above, the resulting optimal trading rate is singular, since it only acts on the local time of the reflected price process. Accordingly, the liquidity costs in the model of \cite{neumann.schied.??} is imposed on the trading rate in local time.} they characterize the optimal trading strategy by a PDE that admits a probabilistic representation in terms of catalytic superprocesses. 
 
 Selling only at the highest possible price seems reasonable for agents with long liquidation horizons and low inventory costs. Yet, for shorter planning horizons or higher inventory costs, substantial immediate trading is necessary since it becomes too costly to wait for the asset price to approach its maximum.
 
-In the present note, we solve the optimal liquidation problem with a price cap without constraining the selling price. To do so, we first extend the results of \cite{lehalle2017incorporating} to general, not neccessarily Markovian trading signals by adapting the calculus-of-variations argument developed for optimalo tracking problems in \cite{bank.al.17,bouchard2017equilibrium}. This allows to treat the case of reflected price processes as a special case, where the optimal liquidation problem reduces to computing the ``theta''\footnote{That is, the derivative with respect to the time variable.} of a lookback call option. If the unaffected price process is modeled by a Bachelier or Black-Scholes model, the optimal trading rate can be computed in closed form up to the numerical evaluation of an integral with explicity known integrand. \texttt{NUmerical results?}
+In the present note, we solve the optimal liquidation problem with a price cap without constraining the selling price. To do so, we first extend the results of \cite{lehalle2017incorporating} to general, not necessarily Markovian trading signals by adapting the calculus-of-variations argument developed for optimal tracking problems in \cite{bank.al.17,bouchard2017equilibrium}. This allows to treat the case of reflected price processes as a special case, where the optimal liquidation problem reduces to computing the ``theta''\footnote{That is, the derivative with respect to the time variable.} of a lookback call option. If the unaffected price process is modeled by a Bachelier or Black-Scholes model, the optimal trading rate can be computed in closed form up to the numerical evaluation of an integral with explicitly known integrand. {\color{red}\texttt{Numerical results?}}
 
 The remainder of this note is organized as follows. The general model and the special case of a price cap are introduced in Section~\ref{s:model}. The solution of the general liquidation problem is subsequently derived in Section~\ref{s:result} and applied to models with price cap in Section~\ref{s:cap}.
 
 \paragraph{Notation}
 
-Throughout, we fix a filtered probability space $(\Omega, \F, \{\F_t\}_{t\in[0,T]}, \P)$ satisfying the usual conditions. The conditional expectation $\E[\cdot \vert \F_t]$ is denoted by $\E_t[\cdot]$ for $t\in[0,T]$. Moreover, we write $\mathcal{H}^1$ for the special semimartingales whose canonical decomposition $S=M+A$ into a (local) martingale $M$ and a predictable finite-variation process $A$ satisfies $\E\bigl[\langle M\rangle^{1/2}_T\bigr] + \E\bigl[\int_0^T \abs{\de A_t}\bigr] < \infty$. Finally, $\mathcal{V}$ denotes the collection of progressively measurable processes $v$ satisfying $\int_0^T \abs{v_t} \de t < \infty$, $\P$-a.s.
+Throughout, we fix a filtered probability space $(\Omega, \F, \{\F_t\}_{t\in[0,T]}, \P)$ satisfying the usual conditions and write $\E_t[\cdot] := \E[\cdot \vert \F_t]$ for $t\in[0,T]$.
+%Moreover, we write $\mathcal{H}^1$ for the special semimartingales whose canonical decomposition $S=M+A$ into a (local) martingale $M$ and a predictable finite-variation process $A$ satisfies $\E\bigl[\langle M\rangle^{1/2}_T\bigr] + \E\bigl[\int_0^T \abs{\de A_t}\bigr] < \infty$. Finally, $\mathcal{V}$ denotes the collection of progressively measurable processes $v$ satisfying $\int_0^T \abs{v_t} \de t < \infty$, $\P$-a.s.
+Moreover, we write $\mathcal{H}^2$ for the special semimartingales whose canonical decomposition $S=M+A$ into a (local) martingale $M$ and a predictable finite-variation process $A$ satisfies $\E[\langle M\rangle_T] + \E[(\int_0^T \abs{\de A_t})^2] < \infty$. Finally, $\mathcal{V}$ denotes the collection of progressively measurable processes $v$ satisfying $\E[\int_0^T \abs{v_t}^2 \de t] < \infty$.
 
 
 \section{Model}\label{s:model}
 
-We consider the optimal liquidation of a large position in a risky asset with price process $P \in \mathcal{H}^1$. The asset position at time $t \in [0,T]$ is denoted by $X_t$, where the given initial position is $X_0:=x$. As in \cite{almgren.chriss.01}, the position can only be adjusted gradually, since trades incur a cost $\lambda>0$ quadratic in the liquidation rate $u_t := -dX_t/dt \in \mathcal{V}$. \texttt{Admissibility is eastablished later on but not defined here;-)}
-With a running inventory cost $\gamma>0$ and a terminal inventory cost $\Gamma>0$, this leads to the following standard goal functional \cite{almgren.chriss.01,???}:
-\[
-\ts V(u):= \E\Bigg[\underbrace{\int_0^T \overbrace{(P_t - \lambda u_t)}^{\textrm{execution price}} u_t \de t}_{\textrm{terminal cash position}} + \underbrace{P_T X_T}_{\stackrel{\textrm{terminal}}{\textrm{asset position}}} - \underbrace{\int_0^T \gamma X_t^2 \de t}_{\stackrel{\textrm{running}}{\textrm{inventory cost}}} - \underbrace{\Gamma X_T^2}_{\stackrel{\textrm{terminal}}{\textrm{inventory cost}}} \Bigg].
-\]
-If the asset price is of the form $\de P_t = I_t \de t + \de M_t$ for a one-dimensional diffusion $I$, then this is precisely the setup of \cite{lehalle2017incorporating}. Here, we allow for more general -- potentially singular -- asset dynamics. This allows to cover the ``target zone models'' studied in \cite{neumann.schied.??}, where the asset price is capped at some finite level:
+We consider the optimal liquidation of a large position in a risky asset with price process $P \in \mathcal{H}^2$. The asset position at time $t \in [0,T]$ is denoted by $X_t$, where the given initial position is $X_0:=x$. As in \cite{almgren.chriss.01}, the position can only be adjusted gradually, since trades incur a cost $\lambda>0$ quadratic in the liquidation rate $u_t := -dX_t/dt$. With a running inventory cost $\gamma>0$ and a terminal inventory cost $\Gamma>0$, this leads to the following standard goal functional \cite{almgren.chriss.01,???}:
+\begin{equation}\label{eq:goal}
+ V(u):= \E\Bigg[\underbrace{\int_0^T \overbrace{(P_t - \lambda u_t)}^{\textrm{execution price}} u_t \de t}_{\textrm{terminal cash position}} + \underbrace{P_T X_T}_{\stackrel{\textrm{terminal}}{\textrm{asset position}}} - \underbrace{\int_0^T \gamma X_t^2 \de t}_{\stackrel{\textrm{running}}{\textrm{inventory cost}}} - \underbrace{\Gamma X_T^2}_{\stackrel{\textrm{terminal}}{\textrm{inventory cost}}} \Bigg],
+\end{equation}
+which is well-defined for all $u\in\mathcal V$.
+If the asset price is of the form $\de P_t = I_t \de t + \de M_t$ for a one-dimensional diffusion $I$, then this is the setup of \cite{lehalle2017incorporating}. Here, we allow for more general -- potentially singular -- asset dynamics. This allows to cover the ``target zone models'' studied in \cite{neumann.schied.??}, where the asset price is capped at some finite level:
 
 \begin{eg}\label{ex:target}
-Consider a martingale $M\in\mathcal{H}^1$ and a constant $\bar{P} \geq M_0$. Then the price ``capped'' at level $\bar{P}$ is defined as the solution of the Skorokhod map 
+Consider a martingale $M\in\mathcal{H}^2$ and a constant $\bar{P} \geq M_0$. Then the price ``capped'' at level $\bar{P}$ is defined as the solution of the Skorokhod map 
 $$P:=M-(M^*-\bar{P})^+,$$
 where $M^*_t:=\sup_{s\in[0,t]} M_s$. This corresponds to the minimal amount of intervention necessary to keep the asset price below level $\bar{P}$, akin to regulatory interventions to keep an exchange rate below a certain threshold.
 \end{eg}
@@ -141,16 +152,14 @@ As the goal functional $u\mapsto V(u)$ is strictly convex, it has a unique maxim
 Set 
 $$\beta:=\sqrt{\gamma/\lambda}, \qquad G(t):= \beta\cosh(\beta t)+\lambda^{-1}\Gamma\sinh(\beta t),
 $$
-and let $P=M+A$ be the canonical decomposition of the (special) semimartingale $P$ in which $M$ is the (local) martingale part and $A$ is the predictable part.
-
-Define 
+and let $P=M+A$ be the canonical decomposition of the (special) semimartingale $P$ in which $M$ is the (local) martingale component and $A$ is the finite-variation component. Define 
 \begin{align*}
 & v_2(t):= %-(\log G)'(T-t) =
 -\frac{G'(T-t)}{G(T-t)},\\%=-\frac{\lambda\beta^2+\Gamma\beta \tanh[\beta(T-t)]}{\lambda\beta+\Gamma\tanh[\beta(T-t)]},\\
 & v_1(t):= \E_t\left[ \frac{1}{2\lambda}\int_t^T \frac{G(T-s)}{G(T-t)} \de A_s \right],\\ %= \frac{1}{2\lambda}\int_t^T \exp\left(\int_t^s v_2\right) \de_s\left(\E_t[P_s]\right), \\
-& v_0(t):= \E_t\left[ \int_t^T v_1^2(s) \de s \right].
+& v_0(t):= \E_t\left[ \int_t^T v_1(s)^2 \de s \right].
 \end{align*}
-The unique maximizer $\hat{u}$ of $u\mapsto V(u)$ solves the (random) linear differential equation
+The unique maximizer $\hat{u}$ of $u\mapsto V(u)$ over $\mathcal V$ solves the (random) linear differential equation
 \begin{align}\label{eq:ODE}
 &\hat{u}_t = -v_2(t) X^{\hat{u}}_t - v_1(t),
 \end{align}
@@ -158,9 +167,9 @@ so that the optimal liquidation trajectory is given by
 \begin{align}\label{eq:Pos}
 &X^{\hat{u}}_t = \frac{G(T-t)}{G(T)}x + \int_0^t \frac{G(T-t)}{G(T-s)} v_1(s) \de s.
 \end{align}
-The corresponding optimal value for \eqref{eq:goal} is 
-\begin{align}\label{eq:goal}
-&\ts V(\hat{u}) = P_0 x + \lambda\left[v_0(0) + 2 v_1(0) x + v_2(0) x^2\right]. \closeEqn
+The corresponding optimal value for~\eqref{eq:goal} is
+\begin{align}
+&\ts V(\hat{u}) = P_0 x + \lambda\left[v_0(0) + 2 v_1(0) x + v_2(0) x^2\right].\closeEqn
 \end{align}
 \end{thm}
 
@@ -171,8 +180,8 @@ The corresponding optimal value for \eqref{eq:goal} is
 % \]
 % \end{rem}
 
-\begin{proof}[Proof of Theorem~\ref{main}]
-We adapt the argument from \cite{bank.al.17,bouchard2017equilibrium}. Recall that $X_t = x-\int_0^t u_s \de s$. Therefore, $X$ is an affine function of $u$. As the goal functional~\eqref{eq:goal} is a quadratic in $(u,X)$ with strictly negative quadratic coefficients, it admits a unique maximizer characterized by the critical point~\cite{ekeland1999convex}. We now solve for this critical point in feedback form.
+\begin{proof}
+We adapt the argument from \cite{bank.al.17,bouchard2017equilibrium}. Recall that $X_t = x-\int_0^t u_s \de s$. Therefore, $X$ is an affine function of $u$. As the goal functional~\eqref{eq:goal} is a quadratic in $(u,X)$ with strictly negative quadratic coefficients, it admits a unique maximizer characterized by the critical point; see, e.g.,~\cite{ekeland1999convex}. We now solve for this critical point in feedback form.
 
 \emph{Step 1: Compute the G\^ateaux derivative}. We fix a direction of variation $\alpha \in \mathcal{V}$ and compute
 \begin{align*}
@@ -200,11 +209,11 @@ Setting,
 \]
 the FBSDE~\eqref{eq:FBSDE} can be written in vector form as 
 \[
-dY_t = B Y_t \de t + \frac{1}{2\lambda}dZ_t, \quad Y^1_0=x, \quad (\Gamma/\lambda, -1)Y_T = 0.
+\de Y_t = B Y_t \de t + \frac{1}{2\lambda}\de Z_t, \quad Y^1_0=x, \quad (\Gamma/\lambda, -1)Y_T = 0.
 \]
-Integration by parts shows that $d(e^{-B t}Y_t)=\frac{1}{2\lambda}e^{-B t}dZ_t$ and in turn
+Integration by parts shows that $\de (e^{-B t}Y_t)=\frac{1}{2\lambda}e^{-B t}\de Z_t$ and in turn
 \begin{align*}
-Y_T &= e^{B(T-t)}Y_t+\frac{1}{2\lambda}\int_t^T e^{B(T-s)}dZ_s.%= q(T-t)Y_t+\frac{1}{2\lambda}\int_t^T q(T-s) dZ_s.
+Y_T &= e^{B(T-t)}Y_t+\frac{1}{2\lambda}\int_t^T e^{B(T-s)}\de Z_s.%= q(T-t)Y_t+\frac{1}{2\lambda}\int_t^T q(T-s) dZ_s.
 \end{align*}
 Now, multiply by $(\Gamma/\lambda,-1)$, take into account the terminal condition $(\Gamma/\lambda, -1)Y_T = 0$, and use  
 $$
@@ -240,8 +249,7 @@ The variation of constants formula now yields the explicit formula~\eqref{eq:Pos
 %\Rightarrow\quad &\ts u^\ast_t = \frac{G'(T-t)}{G(T-t)} X^\ast_t - \frac{1}{2\lambda} \int_t^T \frac{G(T-s)}{G(T-t)} \de _s(\E_t P_s), \textrm{ with } G(t):=-\beta q_2(t) = \beta\cosh(\beta t)+\lambda^{-1}\Gamma\sinh(\beta t).
 %\end{align*}
 %In the last equality we use integration by parts to move expectation to the integrator; the integral can be understood as a pathwise Lebesgue-Stieltjes integral thanks to Remark~\ref{RemIntegral} above. 
-\texttt{This part refers to ``admissibility'' that is never defined anywhere. To be updated.}
-Since both $G$ and $G'$ are bounded from above and below away from zero, we have $\E\abs{u^\ast_t} \le C_1 (x+\int_0^t \E\abs{u^\ast_s} \de s) + C_2$ for some $C_1, C_2 > 0$. Applying Gronwall's lemma, we find that $t\mapsto u^\ast_t$ is bounded in $L^1(\Omega)$ and hence admissible.
+Since both $G$ and $G'$ are bounded from above and below away from zero, we have $\E[\abs{\hat{u}_t}^2] \le C_1 +C_2\int_0^t \E[\abs{\hat{u}_s}^2] \de s$ for some $C_1, C_2 > 0$. Applying Gronwall's lemma, we find that $\E[\abs{\hat{u}_t}^2]\le C_1 e^{C_2 T}$ and hence $\hat{u}\in\mathcal V$ by Fubini.
 
 % Defining $v_2$ and $v_1$ as in the statement of the proposition, we have $u^\ast_t = -v_2(t)X^\ast_t -v_1(t)$, which is a linear differential equation (since $u^\ast=-\dot{X^\ast}$), whose solution is given by
 % \[
@@ -255,12 +263,12 @@ Since both $G$ and $G'$ are bounded from above and below away from zero, we have
 % \]
 The first-order condition $0=\langle V'(\hat{u}), \alpha \rangle$ for $\alpha=\hat{u}$ and its consequence~\eqref{eq:foc} for $t=0$ imply
 \begin{align*}
-V(\hat{u}) &= \frac{1}{2}\E\left[\int_0^T P_t u^\ast_t dt + P_T X^\ast_T \right] + \frac{1}{2}x(-2\lambda u^\ast_0 + P_0).
+V(\hat{u}) &= \frac{1}{2}\E\left[\int_0^T P_t \hat{u}_t \de t + P_T X^{\hat{u}}_T \right] + \frac{1}{2}x(-2\lambda \hat{u}_0 + P_0).
 \end{align*}
 Integration by parts as well as the Formulas~\eqref{eq:ODE} for $\hat{u}_0$ and \eqref{eq:Pos} for $X^{\hat{u}}_t$ in turn show that
 \begin{align*}
-V(\hat{u}) &=\frac{1}{2}\E\left[xP_0 + \int_0^T X^\ast_t dP_t \right] + \frac{1}{2}x(2\lambda v_2(0)x + 2\lambda v_1(0) + P_0)\\
-&= xP_0 + \lambda(v_2(0)x^2+v_1(0)x) + \frac{1}{2}\E\left[\int_0^T \left(\frac{G(T-t)}{G(T)}x + \int_0^t \frac{G(T-t)}{G(T-s)}v_1(s) ds\right) dP_t\right].
+V(\hat{u}) &=\frac{1}{2}\E\left[xP_0 + \int_0^T X^{\hat{u}}_t \de P_t \right] + \frac{1}{2}x(2\lambda v_2(0)x + 2\lambda v_1(0) + P_0)\\
+&= xP_0 + \lambda(v_2(0)x^2+v_1(0)x) + \frac{1}{2}\E\left[\int_0^T \left(\frac{G(T-t)}{G(T)}x + \int_0^t \frac{G(T-t)}{G(T-s)}v_1(s) \de s\right) \de P_t\right].
 \end{align*}
 Since the price process $P_t$ can be replaced by its finite-variation part $A_t$ in the right-most expectation, the asserted form of the optimal value now follows from Fubini's theorem and the definition of $v_1(t)$. % \texttt{This is easier to see with ``my'' representation for $v_1$ ;-)}
 % Instead of directly plugging the optimal strategy $r^\ast$ into the function $r\mapsto V^r_0$, we leverage on the optimality condition, in particular the following two identities:
@@ -287,9 +295,9 @@ Note that the value function consists of two parts: $xP_0$ is the paper value of
 % Observe that our representation of $V^\ast_t$ and the definitions of $v_i(t)$, $i=0,1,2$, are different from those in \cite{lehalle2017incorporating}. These modifications reflect our FBSDE approach. In particular, $G$ plays the role of ``the fundamental solution'' of a linear differential equation, and the expression of $u^\ast$ in terms of $G$ is a consequence of Duhamel's principle. Of course, our representations of $u^\ast$ and $V^\ast$ do coincide with those of~\cite{lehalle2017incorporating} by uniqueness.
 
 In applications, the asset price process $P$ is usually defined via a stochastic differential equation, in which the predictable part $A$ can be easily obtained. Or one can always use Fubini or integration by parts to rewrite $v_1$ as $$v_1(t)= \frac{1}{2\lambda}\int_t^T \frac{G(T-s)}{G(T-t)} \de_s\left(\E_t[P_s]\right).$$
-In the setting of \cite{lehalle2017incorporating}, $\de_s(\E_t P_s) = (E_t I_s)\de s$. In the case of a general semi-martingale asset price, our result simply confirms that the investor only needs to do the same thing as before to achieve the optimum: forecasting price trends until the end of the trading period. % \texttt{Add some comments about optimal trading rate here!}
+In the setting of \cite{lehalle2017incorporating}, $\de_s(\E_t P_s) = (E_t I_s)\de s$. In the case of a general semimartingale asset price, our result simply confirms that the investor only needs to do the same thing as before to achieve the optimum: forecasting price trends until the end of the trading period. % \texttt{Add some comments about optimal trading rate here!}
 
-Observe that if $P$ is a martingale, then we obtain the classical result of \cite{almgren2001optimal}. In particular, the position of the risky asset is deterministic and monotonic, i.e. decreasing during liquidation and increasing during acquisition.
+Observe that if $P$ is a martingale, then we obtain the classical result of \cite{almgren2001optimal}. In particular, the position of the risky asset is deterministic and decreasing.%, i.e. decreasing during liquidation and increasing during acquisition.
 \close
 \end{rem}
 
@@ -298,7 +306,7 @@ Observe that if $P$ is a martingale, then we obtain the classical result of \cit
 % with price limit
 \section{Solution for Target-Zone Models}\label{s:cap}
 
-We now specialize Theorem~\ref{main} to the target-zone models from Example~\ref{ex:target}, where
+We now apply Theorem~\ref{main} to the target-zone model of Example~\ref{ex:target}, where
 $$
 P_t=M_t -(M^*_t-\bar{P})^+, \quad t \in [0,T],
 $$
@@ -314,33 +322,41 @@ for a martingale $M\in\mathcal{H}^1$, its running maximum $M^*_t=\max_{s \in [0,
 % =& P_t -\left\{ \E_t\left[(M_s-c)_+; M_t\le c\right] + \E_t\left[(M_s-c)-(M_t-c); M_t > c\right] \right\} \\
 % =& P_t -\left\{ \E_t\left[(M_s-c)_+; M_t\le c\right] + \E_t\left[(M_s-M_t)_+; M_t > c\right] \right\} = P_t - \E_t\left[(M_s-c\vee M_t)_+\right].
 % \end{align*}
-Thus, $\de_s(\E_t P_s) = -\de_s L_s(t)$, where $L_s(t):=\E_t[(M^*_s-\bar{P}\vee M^*_t)^+]$ is the price at time $t \in [0,T]$ of a lookback call option on $M$ with fixed strike $\bar{P}\vee M^*_t$ and maturity $s \in [t,T]$ . We have therefore reduced the computation of the optimal trading strategies from Theorem~\ref{main} to the calculation of the ``theta'' of a lookback call option written on the uncapped asset price.
+Thus, $\de_s(\E_t P_s) = -\de_s L_s(t)$, where $L_s(t):=\E_t[(M^*_s-\bar{P}\vee M^*_t)^+]$ is the price at time $t \in [0,T]$ of a lookback call option on $M$ with fixed strike $\bar{P}\vee M^*_t$ and maturity $s \in [t,T]$ . We have therefore reduced the computation of the optimal trading strategies from Theorem~\ref{main} to the calculation of the ``theta'' of a lookback call option written on the uncapped asset price. We now illustrate this for uncapped asset prices following arithmetic or geometric Brownian motions, in which case we can use that the joint distribution of Brownian motion and its running maximum is known in closed form to compute the optimal trading strategy explicitly.
 
 %\begin{rem}
 %Indeed, if $S$ is a time-homogeneous Markov process, then all we need is just the Greek theta of the lookback call. (If $S$ is not time-homogeneous, there is a distinction between the forward and backward time variables and the definition of the Greek theta may be ambiguous.)
 %\end{rem}
 
-One way to compute the lookback-option price is to observe that
+%One way to compute the lookback-option price is to observe that
 % We devote the following to the computation of $L_s(t)$. One way is to remove the dependency on the running maximum $M$ as follows:
-\begin{align*}
-L_s(t) = \E_t\left[(M^*_s-\bar{P}\vee M^*_t)^+\right] &= \E_t \left[\int_{c\vee M_t}^{\infty}\I_{(-\infty,M_s)}(y) \de y\right]\\  %\int_{\bar{P}\vee M^*_t}^\infty \E_t[\I_{(-\infty,M_s)}(y)]\de y \\
- &= \int_{c\vee M_t}^\infty \P_t[M^*_s > y] \de y= \int_{c\vee M_t}^\infty \P_t[\tau_t(y) \le s] \de y,
-\end{align*}
-where $\tau_t(y):=\inf\{s\in[t,\infty] : M_s> y\}$ is the first hitting time of the set $(y,\infty)$ after time $t$ by the martingale $M$.\footnote{Note that the identity $\P_t[M^*_s > y] = \P_t[\tau_t(y)\le s]$ is true here since $y\ge M^*_t\ge M_t$; otherwise it could be false as the first hitting time $\tau_t(y)$ after time $t$ does not encode the information of the historical maximum.} When the distribution of the first hitting time is known in closed form, we therefore obtain an explicit expression for the optimal trading strategy. We now illustrate this for uncapped asset prices following arithmetic or geometric Brownian motions.
+%\begin{align*}
+%L_s(t) = \E_t\left[(M^*_s-\bar{P}\vee M^*_t)^+\right] &= \E_t \left[\int_{c\vee M_t}^{\infty}\I_{(-\infty,M_s)}(y) \de y\right]\\  %\int_{\bar{P}\vee M^*_t}^\infty \E_t[\I_{(-\infty,M_s)}(y)]\de y \\
+% &= \int_{c\vee M_t}^\infty \P_t[M^*_s > y] \de y= \int_{c\vee M_t}^\infty \P_t[\tau_t(y) \le s] \de y,
+%\end{align*}
+%where $\tau_t(y):=\inf\{s\in[t,\infty] : M_s> y\}$ is the first hitting time of the set $(y,\infty)$ after time $t$ by the martingale $M$.\footnote{Note that the identity $\P_t[M^*_s > y] = \P_t[\tau_t(y)\le s]$ is true here since $y\ge M^*_t\ge M_t$; otherwise it could be false as the first hitting time $\tau_t(y)$ after time $t$ does not encode the information of the historical maximum.} When the distribution of the first hitting time is known in closed form, we therefore obtain an explicit expression for the optimal trading strategy. We now illustrate this for uncapped asset prices following arithmetic or geometric Brownian motions.
 
 \subsection{Bachelier Model}
-Suppose that $M_t:=M_0(1+ \sigma B_t)$ where $B$ is a standard one-dimensional Brownian motion, and $M_0, \sigma>0$ are constants, so that $L_s(t)$ is the price of a lookback call in the Bachelier model. A straightforward calculation shows that \texttt{Doesn't this use the joint distribution of Brownian motion and its maximum rather than the distribution of the first passage time?}
+Suppose that $M_t:=M_0 + \sigma B_t$ where $B$ is a standard one-dimensional Brownian motion, $M_0\in\mathbb R$ and $ \sigma>0$ are constants, so that $L_s(t)$ is the price of a lookback call in the Bachelier model. A straightforward calculation shows that
+%\texttt{Doesn't this use the joint distribution of Brownian motion and its maximum rather than the distribution of the first passage time?}
 \[
-\de_s L_s(t) = \frac{M_0\sigma}{\sqrt{s-t}}\phi\left(\frac{\bar{P}-P_t}{M_0\sigma\sqrt{s-t}}\right)\de s,\qquad\text{where } \phi(x):=\frac{1}{\sqrt{2\pi}}e^{-\frac{1}{2}x^2}.
+\de_s L_s(t) = \frac{\sigma}{\sqrt{s-t}}\phi\left(\frac{\bar{P}-P_t}{\sigma\sqrt{s-t}}\right)\de s,\qquad\text{where } \phi(x):=\frac{1}{\sqrt{2\pi}}e^{-\frac{1}{2}x^2}.
 \]
 It follows that the optimal liquidation rate from Theorem~\ref{main} is
 \begin{align*}
-\hat{u}_t & = \frac{G'(T-t)}{G(T-t)} X^{\hat{u}}_t +\frac{1}{2\lambda} \int_t^T \frac{M_0\sigma}{\sqrt{s-t}} \frac{G(T-s)}{G(T-t)} \phi\left(\frac{\bar{P}-P_t}{M_0\sigma\sqrt{s-t}}\right) \de s
+\hat{u}_t & = \bar{u}(t,X^{\hat{u}}_t,P_t),\quad\text{where } \bar{u}(t,x,p) := \frac{G'(T-t)}{G(T-t)} x +\frac{1}{2\lambda} \int_t^T \frac{\sigma}{\sqrt{s-t}} \frac{G(T-s)}{G(T-t)} \phi\left(\frac{\bar{P}-p}{\sigma\sqrt{s-t}}\right) \de s
 %&= \bigl[2\lambda\beta\cosh(\beta (T-t))+2\Gamma\sinh(\beta (T-t))\bigr]^{-1} \\
 %&\hspace{1.5cm} \times \Bigl[2\left[\Gamma\beta\cosh(\beta (T-t))+\gamma\sinh(\beta (T-t))\right] X_t\\
 %&\ts\hspace{2.5cm} + \int_t^T \frac{S_0\sigma}{\sqrt{2\pi(s-t)}}\bigl[\beta\cosh(\beta (T-s))+\lambda^{-1}\Gamma\sinh(\beta (T-s))\bigr] \exp{\left(-\frac{1}{2}\frac{(c-P_t)^2}{S_0^2\sigma^2(s-t)}\right)} \de s \Bigr],
 \end{align*}
-where the constant $\beta$ and the function $G$ are defined as in Theorem~\ref{main}. Note that the first term is the optimal liquidation speed in the absence of a price cap, cf.~\cite{almgren.chriss.01}, which does not depend on the current asset price. In contrast, with a price cap, the optimal trading speed also depends on the distance of the current asset price $P_t$ from the cap $\bar{P}$ through the second term. \texttt{Add more discussion here?}
+and where the constant $\beta$ and the function $G$ are defined as in Theorem~\ref{main}. Setting
+\[
+ \bar{u}_{\mathrm{AC}}(t,x) := \frac{G'(T-t)}{G(T-t)} x\qquad\text{and}\qquad \bar{u}_{\mathrm{BA}}(t,p) := \bar{u}(t,0,p) = \bar{u}(t,x,p) -  \bar{u}_{\mathrm{AC}}(t,x),
+\]
+we note that $\bar{u}_{\mathrm{AC}}$ is the optimal liquidation speed in the absence of a price cap, cf.~\cite{almgren.chriss.01}, which does not depend on the current asset price. In contrast, with a price cap, the optimal trading speed also depends on the distance of the current asset price $P_t$ from the cap $\bar{P}$ through $\bar{u}_{\mathrm{BA}}$. We furthermore observe that $\bar{u}_{\mathrm{BA}}\ge 0$, which is to say that the position is liquidated at a higher rate if a price cap is present, and the additional rate $\bar{u}_{\mathrm{BA}}(t,p)$ is decreasing in $\bar P-p$ and maximized at $p = \bar P$, i.e.\ the additional liquidation rate is highest if the current asset price is equal to the price cap. Finally, note that the additional rate $\bar{u}_{\mathrm{BA}}$ is proportional to the trading cost $1/\lambda$, i.e.\ the effect of the price cap on the optimal liquidation rate is more significant for small trading costs and vanishes as the trading cost explodes.
+
+
+
 
 % {\color{red}
 % A straightforward calculation shows that
@@ -383,14 +399,19 @@ where the constant $\beta$ and the function $G$ are defined as in Theorem~\ref{m
 %where $\beta:=\sqrt{\lambda^{-1}\gamma}$.
 
 \subsection{Black-Scholes Model}
-Now, suppose that the uncapped asset price $M$ follows geometric Brownian motion, that is $M_t:=M_0\exp\left(\sigma B_t-\frac{1}{2}\sigma^2 t\right)$ for a standard Brownian motion $B$ and constants $S_0, \sigma >0$. Then, the computation of the optimal selling rate boils down to the computation of the theta of a lookback call in the Black-Scholes model. A standard calculation shows \texttt{Reference? Doesn't this typically use the joint distribution of Brownian motion and its maximum rather than the distribution of the first passage time?}
-\begin{align*}
-\de_s L_s(t) &= M_t\left[ \frac{\sigma}{\sqrt{s-t}}\phi\left(f(P_t,M_t,s,t)\right)+\frac{\sigma^2}{2}\Big(1 - \Phi\bigl(-f(P_t,M_t,s,t)\bigr)\Big)\right] \de s\\
-  &= M_t\left[ \frac{\sigma}{\sqrt{s-t}}\phi\bigl(f(P_t,M_t,s,t)\bigr)+\frac{\sigma^2}{2}\Phi\bigl(f(P_t,M_t,s,t)\bigr)\right] \de s,
-\end{align*}
+Now, suppose that the uncapped asset price $M$ follows geometric Brownian motion, that is $M_t:=M_0\exp\left(\sigma B_t-\frac{1}{2}\sigma^2 t\right)$ for a standard Brownian motion $B$ and constants $S_0, \sigma >0$. Then, the computation of the optimal selling rate boils down to the computation of the theta of a lookback call in the Black-Scholes model. A standard calculation shows
+{\color{red}\texttt{Reference?}}
+%\texttt{Doesn't this typically use the joint distribution of Brownian motion and its maximum rather than the distribution of the first passage time?}
+%\begin{align*}
+%\de_s L_s(t) &= M_t\left[ \frac{\sigma}{\sqrt{s-t}}\phi\left(f(P_t,M_t,s,t)\right)+\frac{\sigma^2}{2}\Big(1 - \Phi\bigl(-f(P_t,M_t,s,t)\bigr)\Big)\right] \de s\\
+%  &= M_t\left[ \frac{\sigma}{\sqrt{s-t}}\phi\bigl(f(P_t,M_t,s,t)\bigr)+\frac{\sigma^2}{2}\Phi\bigl(f(P_t,M_t,s,t)\bigr)\right] \de s,
+%\end{align*}
+\[
+\de_s L_s(t) = M_t\left[ \frac{\sigma}{\sqrt{s-t}}\phi\bigl(f(t,s,M_t,P_t)\bigr)+\frac{\sigma^2}{2}\Phi\bigl(f(t,s,M_t,P_t)\bigr)\right] \de s,
+\]
 where $\Phi$ denotes the cumulative distribution function of the standard normal law, and
 \[
- f(P_t,M_t,s,t) := \frac{\sigma\sqrt{s-t}}{2} - \frac{1}{\sigma\sqrt{s-t}}\log\left(\frac{\bar{P}-P_t}{M_t}+1\right).
+ f(t,s,m,p) := \frac{\sigma\sqrt{s-t}}{2} - \frac{1}{\sigma\sqrt{s-t}}\log\left(\frac{\bar{P}-p}{m}+1\right).
 \]
 % \[
 % \ts \de_s L_s(t) = S_t\left[ \frac{\sigma}{\sqrt{s-t}}p\left(\frac{1}{\sigma\sqrt{s-t}}\log\bigl(\frac{c-P_t}{S_t}+1\bigr)-\frac{\sigma\sqrt{s-t}}{2} \right)+\frac{1}{2}\int_{\log\left(\frac{c-P_t}{S_t}+1\right)}^\infty \frac{\sigma}{\sqrt{s-t}}p\left(\frac{1}{\sigma\sqrt{s-t}}z-\frac{\sigma\sqrt{s-t}}{2}\right)\de z \right] \de s.
@@ -409,40 +430,95 @@ where $\Phi$ denotes the cumulative distribution function of the standard normal
 %  \ts \de_s L_s(t) &\ts= S_t\left[ \frac{\sigma}{\sqrt{s-t}}p\bigl(f(P_t,S_t,s,t)\bigr)+\frac{1}{2}\sigma^2 \bigl(1 - \mathcal N\bigl(-f(P_t,S_t,s,t)\bigr)\bigr)\right] \de s\\
 %   &\ts= S_t\left[ \frac{\sigma}{\sqrt{s-t}}p\bigl(f(P_t,S_t,s,t)\bigr)+\frac{1}{2}\sigma^2 \mathcal N\bigl(f(P_t,S_t,s,t)\bigr)\right] \de s.
 % \end{align*}
-With this, it follows that the optimal selling rate $r^*$ is given by
+With this, it follows that the optimal liquidation rate $\hat{u}$ is given in feedback form by
 \[
- \hat{u}_t = \frac{G'(T-t)}{G(T-t)} X^{\hat{u}}_t + \frac{M_t}{2\lambda}\int_t^T  \frac{G(T-s)}{G(T-t)} \left[ \frac{\sigma}{\sqrt{s-t}}\phi\left(f(P_t,M_t,s,t)\right)+\frac{1}{2}\sigma^2 \Phi\bigl(f(P_t,M_t,s,t)\bigr)\right] \de s.
+ \hat{u}_t = \bar{u}_{\mathrm{AC}}(t,X^{\hat{u}}_t) + \bar{u}_{\mathrm{BS}}(t,M_t,P_t),
 \]
-\texttt{Discuss differences and similarities to Bachelier model!}
-\texttt{What was the point of the last reformulations?}
+where $\bar{u}_{\mathrm{AC}}$ is defined as in the Bachelier model and
+\[
+ \bar{u}_{\mathrm{BS}}(t,m,p) := \frac{m}{2\lambda}\int_t^T  \frac{G(T-s)}{G(T-t)} \left[ \frac{\sigma}{\sqrt{s-t}}\phi\left(f(t,s,m,p)\right)+\frac{1}{2}\sigma^2 \Phi\bigl(f(t,s,m,p)\bigr)\right] \de s.
+\]
+As in the Bachelier model, the trader liquidates the position at a higher rate if a price cap is present since $\bar{u}_{\mathrm{BS}}\ge 0$, and the effect is more pronounced for small trading costs $\lambda$. In contrast to the Bachelier model, however, the additional rate also depends on the uncapped asset price $M_t$.
+
+{\color{red}
+\texttt{Is the dependence on $M_t$ only through the log-moneyness?}
+\texttt{Is monotonicity in $\bar P-p$ clear?}
+\texttt{Do you see anything else worth mentioning?}
+}
+
 
 \section{Numerical Illustration}
 
-\texttt{To be done..}
+{\color{red}\texttt{To be done..}}
+
+
+
+
+%%%                                                                       %%%
+%%% --------------------------------------------------------------------- %%%
+%%%                                                                       %%%
 
 \begin{figure}
-\includegraphics[]{ABM_lin.eps}
-\caption{Optimal liquidation VS straight line liquidation (Arithmetic Brownian motion case)}
-\label{fig:ABM_lin}
+ \setlength\figheight{0.3\linewidth}
+ \setlength\figwidth{0.4\linewidth}
+ \centering
+ \input{graphics/figABM_lambda_0.1.tikz}\hspace{0.5em}
+ \input{graphics/figDiffABM_lambda_0.1.tikz}\\
+ \input{graphics/figABM_lambda_1.tikz}\hspace{0.5em}
+ \input{graphics/figDiffABM_lambda_1.tikz}\\
+ \input{graphics/figABM_lambda_50.tikz}\hspace{0.5em}
+ \input{graphics/figDiffABM_lambda_50.tikz}\\
+ \caption{Optimal trading rate (left) and relative increase of the trading rate compared to Almgren-Chriss (right) in the Bachelier model for various trading cost parameters.}
+ \label{fig:ABM}
 \end{figure}
 
-\begin{figure}
-\includegraphics[]{ABM_AC.eps}
-\caption{Optimal liquidation VS Almgren-Chriss liquidation (Arithmetic Brownian motion case)}
-\label{fig:ABM_lin}
-\end{figure}
+
 
 \begin{figure}
-\includegraphics[]{GBM_lin.eps}
-\caption{Optimal liquidation VS straight line liquidation (Geometric Brownian motion case)}
-\label{fig:ABM_lin}
+ \setlength\figheight{0.3\linewidth}
+ \setlength\figwidth{0.4\linewidth}
+ \centering
+ \input{graphics/figGBM_0.01.tikz}\hspace{0.5em}
+ \input{graphics/figDiffGBM_0.01.tikz}\\
+ \input{graphics/figGBM_1.tikz}\hspace{0.5em}
+ \input{graphics/figDiffGBM_1.tikz}\\
+ \input{graphics/figGBM_10.tikz}\hspace{0.5em}
+ \input{graphics/figDiffGBM_10.tikz}\\
+ \caption{Optimal trading rate (left) and relative increase of the trading rate compared to Almgren-Chriss (right) in the Black-Scholes model for various inventory cost parameters.}
+ \label{fig:GBM}
 \end{figure}
 
-\begin{figure}
-\includegraphics[]{GBM_AC.eps}
-\caption{Optimal liquidation VS Almgren-Chriss liquidation (Geometric Brownian motion case)}
-\label{fig:ABM_lin}
-\end{figure}
+%%%                                                                       %%%
+%%% --------------------------------------------------------------------- %%%
+%%%                                                                       %%%
+
+
+
+
+
+%\begin{figure}
+%\includegraphics[]{ABM_lin.eps}
+%\caption{Optimal liquidation VS straight line liquidation (Arithmetic Brownian motion case)}
+%\label{fig:ABM_lin}
+%\end{figure}
+
+%\begin{figure}
+%\includegraphics[]{ABM_AC.eps}
+%\caption{Optimal liquidation VS Almgren-Chriss liquidation (Arithmetic Brownian motion case)}
+%\label{fig:ABM_lin}
+%\end{figure}
+
+%\begin{figure}
+%\includegraphics[]{GBM_lin.eps}
+%\caption{Optimal liquidation VS straight line liquidation (Geometric Brownian motion case)}
+%\label{fig:ABM_lin}
+%\end{figure}
+
+%\begin{figure}
+%\includegraphics[]{GBM_AC.eps}
+%\caption{Optimal liquidation VS Almgren-Chriss liquidation (Geometric Brownian motion case)}
+%\label{fig:ABM_lin}
+%\end{figure}
 
 % In particular, at time $t=0$ and upon assuming that $P:=P_0=S_0$, this yields
 % \begin{align*}
