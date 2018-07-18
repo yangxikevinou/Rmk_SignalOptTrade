@@ -52,10 +52,8 @@
 %
 % Parameter sets
 %
-%phi = 1e+0; % running inventory penalty
-%phi = 1e-2; % running inventory penalty
-phi = 1e+1; % running inventory penalty
-plot = 1;   % enable/disable plot
+phi  = 1e-2; % running inventory penalty
+plot = 1;    % enable/disable plot
 
 %%%
 %%% Inputs
@@ -65,9 +63,9 @@ T     = 5;    % longest trading horizon
 x     = 1; % position
 S0    = 1; % initial price
 % other variables
+kappa = 1e-1; % temporary price impact
 rho   = phi;  % terminal inventory penalty
 sigma = 0.5;  % volatility parameter
-kappa = 0.1;  % temporary price impact
 
 % theta of lookback call
 % arithmetic Brownian motion
@@ -86,8 +84,8 @@ dG=@(u) phi./kappa.*sinh(beta.*u)+beta.*rho./kappa.*cosh(beta.*u);
 %%%
 %%% Grid
 %%%
-t=linspace(0.01,T,100); % time remaining, y-axis
-m=linspace(0,3,50); % moneyness, x-axis
+t=linspace(0.01,T,50); % time remaining, y-axis
+m=linspace(0,3,25); % moneyness, x-axis
 
 % difference between optimal rate and AC rate
 RdiffABM = zeros(numel(t),numel(m));
@@ -116,14 +114,14 @@ surf(m,t,bsxfun(@rdivide,RdiffABM,Rmart'));
 %    '$\tilde{\sigma} = $', num2str(sigma*sqrt(T))
 %],'Interpreter','latex');
 title([...
-    'Arithmetic Brownian Motion with Cost ' ...
-    '$\gamma = $', num2str(phi*x*T/S0), ' and ' ...
-    '$\Gamma = $', num2str(rho*x/S0)
+    '$\gamma = ', num2str(phi*x*T/S0), '$ and ' ...
+    '$\Gamma = ', num2str(rho*x/S0), '$'
 ],'interpreter','latex');
 xlabel('Moneyness');
 ylabel('Remaining Time');
-zlabel('Relative Increase to Almgren-Chriss');
+zlabel('Relative Increase');
 view([50 40]);
+colorbar;
 
 if plot == 1
     cleanfigure;
@@ -143,14 +141,14 @@ surf(m,t,bsxfun(@plus,RdiffABM,Rmart'));
 %    '$\tilde{\sigma} = $', num2str(sigma*sqrt(T))
 %],'Interpreter','latex');
 title([...
-    'Arithmetic Brownian Motion with Cost ' ...
-    '$\gamma = $', num2str(phi*x*T/S0), ' and ' ...
-    '$\Gamma = $', num2str(rho*x/S0)
+    '$\gamma = ', num2str(phi*x*T/S0), '$ and ' ...
+    '$\Gamma = ', num2str(rho*x/S0), '$'
 ],'interpreter','latex');
 xlabel('Moneyness');
 ylabel('Remaining Time');
 zlabel('Optimal Rate');
 view([50 40]);
+colorbar;
 
 if plot == 1
     cleanfigure;
@@ -169,14 +167,14 @@ surf(m,t,bsxfun(@rdivide,RdiffGBM,Rmart'));
 %    '$\tilde{\sigma} = $', num2str(sigma*sqrt(T))
 %],'Interpreter','latex');
 title([...
-    'Geometric Brownian Motion with Cost ' ...
-    '$\gamma = $', num2str(phi*x*T/S0), ' and ' ...
-    '$\Gamma = $', num2str(rho*x/S0)
+    '$\gamma = ', num2str(phi*x*T/S0), '$ and ' ...
+    '$\Gamma = ', num2str(rho*x/S0), '$'
 ],'interpreter','latex');
 xlabel('Log-Moneyness');
 ylabel('Remaining Time');
-zlabel('Relative Increase to Almgren-Chriss');
+zlabel('Relative Increase');
 view([50 40]);
+colorbar;
 
 if plot == 1
     cleanfigure;
@@ -196,14 +194,14 @@ surf(m,t,bsxfun(@plus,RdiffGBM,Rmart'));
 %    '$\sigma = $', num2str(sigma*sqrt(T))
 %],'interpreter','latex');
 title([...
-    'Geometric Brownian Motion with Cost ' ...
-    '$\gamma = $', num2str(phi*x*T/S0), ' and ' ...
-    '$\Gamma = $', num2str(rho*x/S0)
+    '$\gamma = ', num2str(phi*x*T/S0), '$ and ' ...
+    '$\Gamma = ', num2str(rho*x/S0), '$'
 ],'interpreter','latex');
 xlabel('Log-Moneyness','interpreter','latex');
 ylabel('Remaining Time','interpreter','latex');
 zlabel('Optimal Rate','interpreter','latex');
 view([50 40]);
+colorbar;
 
 if plot == 1
     cleanfigure;
