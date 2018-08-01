@@ -76,7 +76,7 @@
 
 \begin{document}
 
-\title{Optimal Trading with General Signals and an \\ Application to Liquidation in Target-Zone Models}
+\title{Optimal Trading with General Signals and \\ Liquidation in Target Zone Models}
 
 \author{
 Christoph Belak\thanks{University of Trier, Department IV -- Mathematics, Universit\"atsring 19, 54296 Trier, Germany, e-mail: \texttt{belak@uni-trier.de}.}
@@ -91,7 +91,7 @@ Kevin Ou\thanks{Carnegie Mellon University, Department of Mathematical Sciences,
 \maketitle
 
 \begin{abstract}
-We study optimal trading in an Almgren-Chriss model with running and terminal inventory costs and  general predictive signals about price changes. As a special case, this allows to treat optimal liquidation in ``target-zone models'': asset prices with a reflecting boundary enforced by regulatory interventions. In this case, the optimal liquidation rate is the ``theta'' of a lookback option, leading to explicit formulas for Bachelier or Black-Scholes dynamics.
+We study optimal trading in an Almgren-Chriss model with running and terminal inventory costs and  general predictive signals about price changes. As a special case, this allows to treat optimal liquidation in ``target zone models'': asset prices with a reflecting boundary enforced by regulatory interventions. In this case, the optimal liquidation rate is the ``theta'' of a lookback option, leading to explicit formulas for Bachelier or Black-Scholes dynamics.
  
 \bigskip
 \noindent\textbf{Mathematics Subject Classification: (2010)} 93E20, 91G80, 60H07.
@@ -112,7 +112,7 @@ We study optimal trading in an Almgren-Chriss model with running and terminal in
 
 In classical models of optimal liquidation, the unaffected asset price is assumed to be a martingale \cite{bertsimas.lo.98,almgren2001optimal,obizhaeva.wang.13,alfonsi.al.10,predoiu.al.11}. This allows to focus on the liquidation program, while abstracting from signals about future price changes. The effect of such signals\footnote{Typical examples include order book imbalances or forecasts of the future order flow of other market participants.} is studied using stochastic control techniques in \cite{cartea.jaimungal.16,lehalle2017incorporating}, leading to a PDE characterization for Markovian signals and explicit formulas in the special case where the signal processes have Ornstein-Uhlenbeck dynamics. 
 
-A rather different signal about future price changes is studied by Neuman and Schied~\cite{neuman.schied.16}. Motivated by caps on exchange rates enforced by central banks,\footnote{A recent example is the upper bound on the CHF/EUR exchange rate guaranteed by the Swiss National Bank.} they study the optimal liquidation of assets that reflect off an upper threshold.  Under the assumption that the liquidating agent only sells at this most favorable execution price,\footnote{Unlike in the standard optimal execution models surveyed above, the resulting optimal trading rate is singular, since it only acts on the local time of the reflected price process. Accordingly, the liquidity costs in the model of \cite{neuman.schied.16} is imposed on the trading rate in local time.} they characterize the optimal trading strategy by a PDE that admits a probabilistic representation in terms of catalytic superprocesses. 
+A rather different signal about future price changes is studied by~\cite{neuman.schied.16}. Motivated by caps on exchange rates enforced by central banks,\footnote{A recent example is the upper bound on the CHF/EUR exchange rate guaranteed by the Swiss National Bank.} they study the optimal liquidation of assets that reflect off an upper threshold.  Under the assumption that the liquidating agent only sells at this most favorable execution price,\footnote{Unlike in the standard optimal execution models surveyed above, the resulting optimal trading rate is singular, since it only acts on the local time of the reflected price process. Accordingly, the liquidity costs in the model of \cite{neuman.schied.16} is imposed on the trading rate in local time.} they characterize the optimal trading strategy by a PDE that admits a probabilistic representation in terms of catalytic superprocesses. 
 
 Selling only at the highest possible price seems reasonable for agents with long liquidation horizons and low inventory costs. Yet, for shorter planning horizons or higher inventory costs, substantial immediate trading is necessary since it becomes too costly to wait for the asset price to approach its maximum.
 
@@ -127,11 +127,11 @@ Throughout, we fix a filtered probability space $(\Omega, \F, \{\F_t\}_{t\in[0,T
 
 \section{Model}\label{s:model}
 
-We consider optimal trading in a risky asset with price process $P \in \mathcal{H}^2$. The asset position at time $t \in [0,T]$ is denoted by $X_t$, where the given initial position is $X_0:=x>0$. As in \cite{almgren2001optimal}, the position can only be adjusted gradually, since trades incur a cost $\lambda>0$ quadratic in the liquidation rate $u_t := -dX_t/dt$. With a running inventory cost $\gamma>0$ and a terminal inventory cost $\Gamma>0$, this leads to the following standard goal functional:\footnote{Note that $V(u)$ is well defined for all $u\in\mathcal V$. As the terminal inventory penalty $\Gamma$ grows, this criterion approaches optimal liquidation, where the position has to be closed out completely at maturity.}
+We consider optimal trading in a risky asset with price process $P \in \mathcal{H}^2$. The asset position at time $t \in [0,T]$ is denoted by $X_t$, where the given initial position is $X_0:=x>0$. As in \cite{almgren2001optimal}, the position can only be adjusted gradually, since trades incur a cost $\lambda>0$ quadratic in the selling rate $u_t := -dX_t/dt$. With a running inventory cost $\gamma>0$ and a terminal inventory cost $\Gamma>0$, this leads to the following standard goal functional:\footnote{Note that $V(u)$ is well defined for all $u\in\mathcal V$. As the terminal inventory penalty $\Gamma$ grows, this criterion approaches optimal liquidation, where the position has to be closed out completely at maturity.}
 \begin{equation}\label{eq:goal}
  V(u):= \E\Bigg[\underbrace{\int_0^T \overbrace{(P_t - \lambda u_t)}^{\textrm{execution price}} u_t \de t}_{\textrm{terminal cash position}} + \underbrace{P_T X_T}_{\stackrel{\textrm{terminal}}{\textrm{asset position}}} - \underbrace{\int_0^T \gamma X_t^2 \de t}_{\stackrel{\textrm{running}}{\textrm{inventory cost}}} - \underbrace{\Gamma X_T^2}_{\stackrel{\textrm{terminal}}{\textrm{inventory cost}}} \Bigg].
 \end{equation}
-For asset prices with martingale dynamics, criteria of this type were first introduced bu \cite{almgren.12,forsyth.al.12} and subsequently studied by, e.g., \cite{schied.13,ankirchner.al.14,graewe.al.15}. If the asset price is of the form $\de P_t = I_t \de t + \de M_t$ for a one-dimensional diffusion $I$, then~\eqref{eq:goal} corresponds to the setup of \cite{lehalle2017incorporating}.  Here, we allow for more general -- potentially singular -- asset dynamics. This allows to cover the ``target zone models'' studied in \cite{neuman.schied.16}, where the asset price is capped at some finite level: 
+For asset prices with martingale dynamics, criteria of this type were first introduced by \cite{almgren.12,forsyth.al.12} and subsequently studied by, e.g., \cite{schied.13,ankirchner.al.14,graewe.al.15}. If the asset price is of the form $\de P_t = I_t \de t + \de M_t$ for a one-dimensional diffusion $I$, then~\eqref{eq:goal} corresponds to the setup of \cite{lehalle2017incorporating}.  Here, we allow for more general -- potentially singular -- asset dynamics. This allows to cover the ``target zone models'' studied in \cite{neuman.schied.16}, where the asset price is capped at some finite level: 
 
 \begin{eg}\label{ex:target}
 Consider a martingale $M\in\mathcal{H}^2$ and a constant $\bar{P} \geq M_0$. Then the price ``capped'' at level $\bar{P}$ is defined as the solution of the Skorokhod map 
